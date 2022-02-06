@@ -12,14 +12,16 @@ else
   writeLog "INFO - Docker presente, procedo."
 fi
 
-whoami
+writeLog "INFO - Processo di boot dello SLAVE..."
 
+writeLog "INFO - Processo attivo come $(whoami)"
+
+writeLog "INFO - Installo prerequisiti"
 chown root:docker /docker
 apt-get -y install sqlite
 
 sleep 5
 
-writeLog "INFO - Processo di boot dello SLAVE..."
 
 # if [[ "$(gpio read 2)" -eq "0" ]]; then
 #   writeLog "INFO - Switch di start slave disabilitato"

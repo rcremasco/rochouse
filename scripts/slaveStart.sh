@@ -12,6 +12,8 @@ else
   writeLog "INFO - Docker presente, procedo."
 fi
 
+whoami
+
 chown root:docker /docker
 apt-get -y install sqlite
 

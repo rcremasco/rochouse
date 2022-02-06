@@ -25,10 +25,14 @@ checkPrerequisite()
   fi
 
   if [ $check -gt 0 ]; then
+    echo "check ritorna 0"
     return 0
-  else 
+  else
+    echo "check ritorna 1"
     return 1
   fi
+
+
 
 }
 
@@ -38,12 +42,13 @@ writeLog "INFO - Processo di boot dello SLAVE..."
 writeLog "INFO - Processo attivo come $(whoami)"
 
 writeLog "INFO - Controllo prerequisiti"
-if [ ! "$(checkPrerequisite)" ]; then
+if [ "$(checkPrerequisite)" -eq 0 ]; then
   writeLog "ERROR - Prerequisiti mancanti per proseguire"
   exit
 else
   writeLog "INFO - Prerequisiti OK"
 fi
+
 
 writeLog "INFO - Installo prerequisiti"
 #chown root:docker /docker

@@ -38,7 +38,7 @@ writeLog "INFO - Processo di boot dello SLAVE..."
 writeLog "INFO - Processo attivo come $(whoami)"
 
 writeLog "INFO - Controllo prerequisiti"
-if [ ! $(checkPrerequisite) ]; then
+if [ ! "$(checkPrerequisite)" ]; then
   writeLog "ERROR - Prerequisiti mancanti per proseguire"
   exit
 else

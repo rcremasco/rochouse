@@ -9,21 +9,22 @@ writeLog()
 checkPrerequisite()
 {
 
+  check=0
   if ! which docker &> /dev/null; then
     writeLog "ERROR - Docker non ancora installato. Installarlo..."
-    check=0
+    ((check=check+1))
   else
     writeLog "INFO - Docker presente."
   fi
 
   if ! which rclone &> /dev/null; then
     writeLog "ERROR - rclone non ancora installato. Installarlo..."
-    check=0
+    ((check=check+1))
   else
     writeLog "INFO - rclone presente."
   fi
 
-  if ! check; then
+  if [ check -gt 0 ]; then
     return 0
   else 
     return 1

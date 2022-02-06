@@ -6,10 +6,14 @@ writeLog()
   echo "$(date +%Y-%m-%d_%H:%M:%S) $1" >>/tmp/slaveStart.log
 }
 
-
+if ! which docker &> /dev/null; then
+  writeLog "ERROR - Docker non ancora installato."
+else
+  writeLog "INFO - Docker presente, procedo."
+fi
 
 chown root:docker /docker
-apt-get -y install openvpn sqlite
+apt-get -y install sqlite
 
 sleep 5
 

@@ -6,19 +6,47 @@ writeLog()
   echo "$(date +%Y-%m-%d_%H:%M:%S) $1" >>/tmp/slaveStart.log
 }
 
-if ! which docker &> /dev/null; then
-  writeLog "ERROR - Docker non ancora installato."
-else
-  writeLog "INFO - Docker presente, procedo."
-fi
+checkPrerequisite()
+{
+
+  if ! which docker &> /dev/null; then
+    writeLog "ERROR - Docker non ancora installato. Installarlo..."
+    checkPrerequisite=0
+  else
+    writeLog "INFO - Docker presente."
+  fi
+
+  if ! which rclone &> /dev/null; then
+    writeLog "ERROR - rclone non ancora installato. Installarlo..."
+    checkPrerequisite=0
+  else
+    writeLog "INFO - rclone presente."
+  fi
+
+  if ! checkPrerequisite; then
+    return 0
+  else 
+    return 1
+  fi
+
+}
+
 
 writeLog "INFO - Processo di boot dello SLAVE..."
 
 writeLog "INFO - Processo attivo come $(whoami)"
 
+writeLog "INFO - Controllo prerequisiti"
+if ! checkPrerequisite; then
+  writeLog "ERROR - Prerequisiti mancanti per proseguire"
+  exit
+else
+  writeLog "INFO - Prerequisiti OK"
+fi
+
 writeLog "INFO - Installo prerequisiti"
-chown root:docker /docker
-apt-get -y install sqlite
+#chown root:docker /docker
+#apt-get -y install sqlite
 
 sleep 5
 
@@ -94,12 +122,10 @@ writeLog "INFO - Controllo se il Master è attivo..."
 if ping -c 1 192.168.10.4 > /dev/null; then
   writeLog "WARNING - il Master è attivo"
   writeLog "WARNING - Fermo i servizi sul Master per evitare conflitti"
-  writeLog "INFO - Fermo openvpn client"
-  ssh root@192.168.10.4 'systemctl stop openvpn@client.service'
   writeLog "INFO - Fermo home-assistant"
-  ssh pi@192.168.10.4 'docker stop home-assistant'
+#  ssh pi@192.168.10.4 'docker stop home-assistant'
   writeLog "INFO - Fermo deconz"
-  ssh pi@192.168.10.4 'docker stop deconz'
+#  ssh pi@192.168.10.4 'docker stop deconz'
 else
   writeLog "INFO - Il master non risponde, lo considero morto e faccio partire i processi su Slave"
 fi

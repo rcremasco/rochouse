@@ -24,7 +24,7 @@ checkPrerequisite()
     writeLog "INFO - rclone presente."
   fi
 
-  if [ check -gt 0 ]; then
+  if [ $check -gt 0 ]; then
     return 0
   else 
     return 1

@@ -19,13 +19,13 @@ sleep 5
 
 writeLog "INFO - Processo di boot dello SLAVE..."
 
-if [[ "$(gpio read 2)" -eq "0" ]]; then
-  writeLog "INFO - Switch di start slave disabilitato"
-  writeLog "INFO - Esco dalla procedura"
-  exit 1
-else
-  writeLog "INFO - Switch di start slave abilitato, procedo"
-fi
+# if [[ "$(gpio read 2)" -eq "0" ]]; then
+#   writeLog "INFO - Switch di start slave disabilitato"
+#   writeLog "INFO - Esco dalla procedura"
+#   exit 1
+# else
+#   writeLog "INFO - Switch di start slave abilitato, procedo"
+# fi
 
 writeLog "INFO - Controllo connettività WiFi."
 
@@ -84,6 +84,7 @@ else
   exit
 fi
 
+exit
 
 writeLog "INFO - Controllo se il Master è attivo..."
 if ping -c 1 192.168.10.4 > /dev/null; then

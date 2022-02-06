@@ -25,10 +25,10 @@ checkPrerequisite()
   fi
 
   if [ $check -gt 0 ]; then
-    echo "check ritorna 0"
+    echo "check ritorna 0 BAD"
     return 0
   else
-    echo "check ritorna 1"
+    echo "check ritorna 1 GOOD"
     return 1
   fi
 
@@ -42,7 +42,7 @@ writeLog "INFO - Processo di boot dello SLAVE..."
 writeLog "INFO - Processo attivo come $(whoami)"
 
 writeLog "INFO - Controllo prerequisiti"
-if [ "$(checkPrerequisite)" -eq 0 ]; then
+if [ checkPrerequisite -eq 0 ]; then
   writeLog "ERROR - Prerequisiti mancanti per proseguire"
   exit
 else

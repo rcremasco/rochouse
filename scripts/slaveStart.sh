@@ -6,7 +6,7 @@ writeLog()
   echo "$(date +%Y-%m-%d_%H:%M:%S) $1" >>/tmp/slaveStart.log
 }
 
-checkPrerequisite()
+checkPrerequisiteOK()
 {
 
   check=0
@@ -42,7 +42,7 @@ writeLog "INFO - Processo di boot dello SLAVE..."
 writeLog "INFO - Processo attivo come $(whoami)"
 
 writeLog "INFO - Controllo prerequisiti"
-if [ checkPrerequisite -eq 0 ]; then
+if checkPrerequisiteOK; then
   writeLog "ERROR - Prerequisiti mancanti per proseguire"
   exit
 else

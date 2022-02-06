@@ -25,14 +25,10 @@ checkPrerequisiteOK()
   fi
 
   if [ $check -gt 0 ]; then
-    echo "check ritorna 0 BAD"
     return 0
   else
-    echo "check ritorna 1 GOOD"
     return 1
   fi
-
-
 
 }
 

@@ -28,6 +28,18 @@ checkPrerequisiteOK()
     writeLog "INFO - rclone presente."
   fi
 
+
+  writeLog "INFO - Verifico che /docker esista"
+  if [[ -d /docker ]]
+  then
+    writeLog "INFO - directory /docker presente, confermo permessi."
+    chown root:docker /docker
+  else
+    writeLog "INFO - directory /docker assente, viene creata"
+    mkdir /docker
+    chown root:docker /docker
+  fi
+
   if [ $check -gt 0 ]; then
     return 0
   else
@@ -119,10 +131,9 @@ elif [[ -c /dev/ttyACM0 ]]; then
 else
   writeLog "ERROR - Non ho trovato nessun ConBee"
   writeLog "ERROR - Esco dalla procedura..."
-  exit
+#  exit
 fi
 
-exit
 
 writeLog "INFO - Controllo se il Master è attivo..."
 if ping -c 1 192.168.10.4 > /dev/null; then
@@ -143,11 +154,11 @@ rclone sync GDRIVE:raspi/backup/ /backup/
 writeLog "INFO - Rispristino OK"
 
 writeLog "INFO - Fermo deconz"
-su -c "docker stop deconz" pi
+#su -c "docker stop deconz" pi
 writeLog "INFO - rimuovo precedente deconz"
-su -c "docker rm deconz" pi
+#su -c "docker rm deconz" pi
 writeLog "INFO - Aggiorno deconz"
-su -c "docker pull marthoc/deconz" pi
+#su -c "docker pull marthoc/deconz" pi
 writeLog "INFO - deconz aggiornato"
 
 writeLog "INFO - Ripristino i dati di deconz"
@@ -159,18 +170,18 @@ chown -R pi:pi /docker/deconz
 
 
 writeLog "INFO - Attivazione di deconz sul device $CONDEV"
-su -c "docker run -d --name=deconz --net=host --restart=always -v /docker/deconz:/root/.local/share/dresden-elektronik/deCONZ --device=$CONDEV -e DECONZ_VNC_MODE=0 -e DECONZ_VNC_PORT=5900  -e DECONZ_VNC_PASSWORD=changeme  marthoc/deconz" pi
-su -c "docker update  --restart=unless-stopped deconz" pi
+#su -c "docker run -d --name=deconz --net=host --restart=always -v /docker/deconz:/root/.local/share/dresden-elektronik/deCONZ --device=$CONDEV -e DECONZ_VNC_MODE=0 -e DECONZ_VNC_PORT=5900  -e DECONZ_VNC_PASSWORD=changeme  marthoc/deconz" pi
+#su -c "docker update  --restart=unless-stopped deconz" pi
 writeLog "INFO - deconz Attivato"
 
 
 writeLog "INFO - Fermo home-assistant"
-su -c "docker stop home-assistant" pi
+#su -c "docker stop home-assistant" pi
 writeLog "INFO - Rimuovo precedente home-assistant"
-su -c "docker rm home-assistant" pi
+#su -c "docker rm home-assistant" pi
 writeLog "INFO - Aggiorno home-assistant"
-su -c "docker pull homeassistant/raspberrypi3-homeassistant" pi
-su -c "docker update  --restart=unless-stopped home-assistant" pi
+#su -c "docker pull homeassistant/raspberrypi3-homeassistant" pi
+#su -c "docker update  --restart=unless-stopped home-assistant" pi
 writeLog "INFO - home-assistant aggiornato"
 
 writeLog "INFO - Ripristino file di home-assistant"
@@ -183,7 +194,7 @@ sed -i 's/192\.168\.10\.4/192\.168\.10\.5/g' /docker/homeassistant/.storage/core
 chown -R pi:pi /docker/homeassistant
 
 writeLog "INFO - Attivazione di home assistant"
-su -c "docker run -d --name="home-assistant" -v /docker/homeassistant:/config -v /etc/localtime:/etc/localtime:ro --net=host homeassistant/raspberrypi3-homeassistant" pi
+#su -c "docker run -d --name="home-assistant" -v /docker/homeassistant:/config -v /etc/localtime:/etc/localtime:ro --net=host homeassistant/raspberrypi3-homeassistant" pi
 writeLog "INFO - home assistant attivato"
 
 
@@ -195,13 +206,13 @@ writeLog "INFO - home assistant attivato"
 #systemctl start influxdb
 
 
-writeLog "INFO - Fermo openvpn"
-systemctl stop openvpn@client.service
-writeLog "INFO - Ripristino configurazione openvpn"
-rclone sync GDRIVE:raspi/etc/openvpn /etc/openvpn
-writeLog "INFO - Attivazione openvpn"
-systemctl start openvpn@client.service
-writeLog "INFO - openvpn attivata"
+#writeLog "INFO - Fermo openvpn"
+#systemctl stop openvpn@client.service
+#writeLog "INFO - Ripristino configurazione openvpn"
+#rclone sync GDRIVE:raspi/etc/openvpn /etc/openvpn
+#writeLog "INFO - Attivazione openvpn"
+#systemctl start openvpn@client.service
+#writeLog "INFO - openvpn attivata"
 
 writeLog "INFO - Processo attivazione Slave completata"
 

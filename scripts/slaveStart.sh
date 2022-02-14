@@ -51,7 +51,22 @@ checkPrerequisiteOK()
 localRestore()
 {
 
+  writeLog "INFO - riprinstino della /docker"
   sudo rsync -avrWS --inplace /media/pi/RHBCK/docker/docker /
+
+  writeLog "INFO - ripristino immagine docker home-assistant"
+  sudo chown pi:pi /media/pi/RHBCK/docker/images/home-assistant.tar
+  docker load -i /media/pi/RHBCK/docker/images/home-assistant.tar
+  docker images ls
+
+#docker system prune
+#docker image ls
+#docker load -i ./ha-2021.11.0.tar
+#docker image ls
+#docker ps
+#docker run -d --name="home-assistant"         -v /docker/homeassistant:/config         -v /etc/localtime:/etc/localtime:ro         --privileged       --net=host homeassistant/raspberrypi3-homeassistant
+#docker ps
+
 
 }
 

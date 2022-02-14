@@ -33,11 +33,11 @@ checkPrerequisiteOK()
   if [[ -d /docker ]]
   then
     writeLog "INFO - directory /docker presente, confermo permessi."
-    chown root:docker /docker
+    sudo chown root:docker /docker
   else
     writeLog "INFO - directory /docker assente, viene creata"
-    mkdir /docker
-    chown root:docker /docker
+    sudo mkdir /docker
+    sudo chown root:docker /docker
   fi
 
   if [ $check -gt 0 ]; then
@@ -48,6 +48,12 @@ checkPrerequisiteOK()
 
 }
 
+localRestore()
+{
+
+  sudo rsync -avrWS --inplace /media/pi/RHBCK/docker/docker /
+
+}
 
 writeLog "INFO - Processo di boot dello SLAVE..."
 
@@ -147,6 +153,13 @@ else
   writeLog "INFO - Il master non risponde, lo considero morto e faccio partire i processi su Slave"
 fi
 
+
+if [ -d /media/pi/RHBCK ]; then
+  writeLog "INFO - Trovata chiavetta con i backup, rispristino da USB key"
+  localRestore
+fi
+
+exit
 
 writeLog "INFO - Ripristino i dati in /backup"
 [ ! -d /backup/ ] && mkdir -p /backup

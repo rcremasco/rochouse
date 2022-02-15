@@ -54,18 +54,69 @@ localRestore()
   writeLog "INFO - riprinstino della /docker"
   sudo rsync -avrWS --inplace /media/pi/RHBCK/docker/docker /
 
+  docker system prune -a -f
+
+  writeLog "INFO - ripristino immagine docker chain2"
+  sudo chown pi:pi /media/pi/RHBCK/docker/images/chain2.tar
+  docker load -i /media/pi/RHBCK/docker/images/chain2.tar
+
+  writeLog "INFO - ripristino immagine docker chronograf"
+  sudo chown pi:pi /media/pi/RHBCK/docker/images/chronograf.tar
+  docker load -i /media/pi/RHBCK/docker/images/chronograf.tar
+
+  writeLog "INFO - ripristino immagine docker deconz"
+  sudo chown pi:pi /media/pi/RHBCK/docker/images/deconz.tar
+  docker load -i /media/pi/RHBCK/docker/images/deconz.tar
+
+  writeLog "INFO - ripristino immagine docker docker-magicmirror"
+  sudo chown pi:pi /media/pi/RHBCK/docker/images/docker-magicmirror.tar
+  docker load -i /media/pi/RHBCK/docker/images/docker-magicmirror.tar
+
+  writeLog "INFO - ripristino immagine docker grafana"
+  sudo chown pi:pi /media/pi/RHBCK/docker/images/grafana.tar
+  docker load -i /media/pi/RHBCK/docker/images/grafana.tar
+
+  writeLog "INFO - ripristino immagine docker hik2ha-wrapper"
+  sudo chown pi:pi /media/pi/RHBCK/docker/images/hik2ha-wrapper.tar
+  docker load -i /media/pi/RHBCK/docker/images/hik2ha-wrapper.tar
+
   writeLog "INFO - ripristino immagine docker home-assistant"
   sudo chown pi:pi /media/pi/RHBCK/docker/images/home-assistant.tar
   docker load -i /media/pi/RHBCK/docker/images/home-assistant.tar
-  docker images ls
 
-#docker system prune
-#docker image ls
-#docker load -i ./ha-2021.11.0.tar
-#docker image ls
-#docker ps
-#docker run -d --name="home-assistant"         -v /docker/homeassistant:/config         -v /etc/localtime:/etc/localtime:ro         --privileged       --net=host homeassistant/raspberrypi3-homeassistant
-#docker ps
+  writeLog "INFO - ripristino immagine docker influxdb"
+  sudo chown pi:pi /media/pi/RHBCK/docker/images/influxdb.tar
+  docker load -i /media/pi/RHBCK/docker/images/influxdb.tar
+
+  writeLog "INFO - ripristino immagine docker mosquito"
+  sudo chown pi:pi /media/pi/RHBCK/docker/images/mosquito.tar
+  docker load -i /media/pi/RHBCK/docker/images/mosquito.tar
+
+  writeLog "INFO - ripristino immagine docker node-red"
+  sudo chown pi:pi /media/pi/RHBCK/docker/images/node-red.tar
+  docker load -i /media/pi/RHBCK/docker/images/node-red.tar
+
+  writeLog "INFO - ripristino immagine docker telegraf"
+  sudo chown pi:pi /media/pi/RHBCK/docker/images/telegraf.tar
+  docker load -i /media/pi/RHBCK/docker/images/telegraf.tar
+
+  docker images
+
+  writeLog "INFO - Ripristino database deconz"
+  sudo rm -f /docker/deconz/zll.db
+  sudo zcat /media/pi/RHBCK/docker/backup/zll.db.gz | sudo sqlite3 /docker/deconz/zll.db
+  sudo chown -R pi:pi /docker/deconz
+
+  writeLog "INFO - Restoring home assistant db"
+  sudo rm -f /docker/homeassistant/home-assistant_v2.db
+  sudo zcat /media/pi/RHBCK/docker/backup/ha.db.gz | sudo sqlite3 /docker/homeassistant/home-assistant_v2.db
+  sudo chown -R pi:pi /docker/homeassistant/home-assistant_v2.db
+
+  writeLog "INFO - Restoring grafana db"
+  sudo rm -f /docker/grafana/grafana.db
+  sudo zcat /media/pi/RHBCK/docker/backup/grafana.db.gz | sudo sqlite3 /docker/grafana/grafana.db
+  sudo chown -R 472:472 /docker/grafana/grafana.db
+
 
 
 }

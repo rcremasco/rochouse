@@ -19,15 +19,68 @@ INFLUX_DATA="$INFLUX_ROOT/data"
 INFLUX_CONF="$INFLUX_ROOT/etc"
 INFLUX_TYPESDB="$INFLUX_ROOT/types-db"
 
-# Creazione directory
-mkdir -p $INFLUX_DATA ; mkdir -p $INFLUX_CONF
 
-docker stop influxdb
-docker rm influxdb
+setupFolder()
+{
+  # Creazione directory
+  if [ ! -d  $INFLUX_DATA ]; then
+    mkdir -p $INFLUX_DATA
+    echo "$INFLUX_DATA created"
+  else
+    echo "$INFLUX_DATA already present"
+  fi
 
-docker pull influxdb:1.8
+  if [ ! -d  $INFLUX_CONF ]; then
+    mkdir -p $INFLUX_CONF
+    echo "$INFLUX_CONF created"
+  else
+    echo "$INFLUX_CONF already present"
+  fi
 
-docker run --name=influxdb \
+}
+
+stopDocker()
+{
+  if [ $(docker ps | grep influx | wc -l) -eq 1 ]; then
+    echo "stopping influx docker"
+    docker stop influxdb
+    echo "stopped"
+  else
+    echo "already stopped"
+  fi
+}
+
+removeDocker()
+{
+
+  stopDocker
+
+  if [ $(docker ps -a | grep influx | wc -l) -eq 1 ]; then
+    echo "removing influx docker"
+    docker rm influxdb
+    echo "removed"
+  else
+    echo "docker already removed"
+  fi
+}
+
+pullDocker()
+{
+  echo "pulling influx image"
+  docker pull influxdb:1.8
+  echo "pulled"
+}
+
+setupDocker()
+{
+  echo "setting docker"
+  docker update  --restart=unless-stopped influxdb
+}
+
+runDocker()
+{
+  echo "run influx docker"
+  docker run -d --name=influxdb \
         --restart=always \
         -p 8086:8086 \
         -p 25826:25826/udp \
@@ -38,7 +91,79 @@ docker run --name=influxdb \
 	-v /backup:/backup \
         influxdb:1.8 -config /etc/influxdb/influxdb.conf
 #        influxdb:$VERSION -config /etc/influxdb/influxdb.conf
+  echo "runed"
 
-docker update  --restart=unless-stopped influxdb
+  setupDocker
 
-docker start influxdb
+}
+
+setupDocker()
+{
+  echo "setting docker"
+  docker update  --restart=unless-stopped influxdb
+}
+
+startDocker()
+{
+  if [ $(docker ps -a | grep influx | wc -l) -eq 0 ]; then
+    echo "docker not present, call run"
+    runDocker
+  fi
+
+  echo "start docker"
+  docker start influxdb
+  echo "started"
+}
+
+restoreDB()
+{
+
+  echo "restoring ha db"
+  docker exec -it influxdb influxd restore -portable -db ha /backup/influx.bck/ha
+  echo "restored"
+
+  echo "restoring telegraf db"
+  docker exec -it influxdb influxd restore -portable -db telegraf /backup/influx.bck/telegraf
+  echo "restored"
+
+}
+
+
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+        # 
+        run)
+        runDocker
+        ;;
+        # 
+        stop)
+        stopDocker
+        ;;
+        # 
+        start)
+        startDocker
+        ;;
+        # 
+        remove)
+        removeDocker
+	;;
+	restore)
+	restoreDB
+	;;
+        setup)
+        setupFolder
+	removeDocker
+	pullDocker
+	runDocker
+	setupDocker
+        ;;
+        *)
+        # Do whatever you want with extra options
+        echo "Unknown option '$key'"
+	echo "possible options are: run stop start stop remove setup"
+        ;;
+    esac
+    # Shift after checking all the cases to get the next option
+    shift
+done

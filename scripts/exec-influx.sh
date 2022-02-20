@@ -19,22 +19,30 @@ INFLUX_DATA="$INFLUX_ROOT/data"
 INFLUX_CONF="$INFLUX_ROOT/etc"
 INFLUX_TYPESDB="$INFLUX_ROOT/types-db"
 
+writeLog()
+{
+
+    echo "$(date +"%Y/%m/%d %H:%M:%S") - $1"
+#    echo "$(date +"%Y/%m/%d %H:%M:%S") - $1" >> /tmp/backup.log
+
+}
+
 
 setupFolder()
 {
   # Creazione directory
   if [ ! -d  $INFLUX_DATA ]; then
     mkdir -p $INFLUX_DATA
-    echo "$INFLUX_DATA created"
+    writeLog "$INFLUX_DATA created"
   else
-    echo "$INFLUX_DATA already present"
+    writeLog "$INFLUX_DATA already present"
   fi
 
   if [ ! -d  $INFLUX_CONF ]; then
     mkdir -p $INFLUX_CONF
-    echo "$INFLUX_CONF created"
+    writeLog "$INFLUX_CONF created"
   else
-    echo "$INFLUX_CONF already present"
+    writeLog "$INFLUX_CONF already present"
   fi
 
 }
@@ -42,11 +50,11 @@ setupFolder()
 stopDocker()
 {
   if [ $(docker ps | grep influx | wc -l) -eq 1 ]; then
-    echo "stopping influx docker"
+    writeLog "stopping influx docker"
     docker stop influxdb
-    echo "stopped"
+    writeLog "stopped"
   else
-    echo "already stopped"
+    writeLog "already stopped"
   fi
 }
 
@@ -56,30 +64,30 @@ removeDocker()
   stopDocker
 
   if [ $(docker ps -a | grep influx | wc -l) -eq 1 ]; then
-    echo "removing influx docker"
+    writeLog "removing influx docker"
     docker rm influxdb
-    echo "removed"
+    writeLog "removed"
   else
-    echo "docker already removed"
+    writeLog "docker already removed"
   fi
 }
 
 pullDocker()
 {
-  echo "pulling influx image"
+  writeLog "pulling influx image"
   docker pull influxdb:1.8
-  echo "pulled"
+  writeLog "pulled"
 }
 
 setupDocker()
 {
-  echo "setting docker"
+  writeLog "setting docker"
   docker update  --restart=unless-stopped influxdb
 }
 
 runDocker()
 {
-  echo "run influx docker"
+  writeLog "run influx docker"
   docker run -d --name=influxdb \
         --restart=always \
         -p 8086:8086 \
@@ -91,7 +99,7 @@ runDocker()
 	-v /backup:/backup \
         influxdb:1.8 -config /etc/influxdb/influxdb.conf
 #        influxdb:$VERSION -config /etc/influxdb/influxdb.conf
-  echo "runed"
+  writeLog "runed"
 
   setupDocker
 
@@ -99,72 +107,72 @@ runDocker()
 
 setupDocker()
 {
-  echo "setting docker"
+  writeLog "setting docker"
   docker update  --restart=unless-stopped influxdb
 }
 
 startDocker()
 {
   if [ $(docker ps -a | grep influx | wc -l) -eq 0 ]; then
-    echo "docker not present, call run"
+    writeLog "docker not present, call run"
     runDocker
   fi
 
-  echo "start docker"
+  writeLog "start docker"
   docker start influxdb
-  echo "started"
+  writeLog "started"
 }
 
 restoreDB()
 {
 
-  echo "restoring ha db"
+  writeLog "restoring ha db"
   docker exec -it influxdb influxd restore -portable -db ha /backup/influx.bck/ha
-  echo "restored"
+  writeLog "restored"
 
-  echo "restoring telegraf db"
+  writeLog "restoring telegraf db"
   docker exec -it influxdb influxd restore -portable -db telegraf /backup/influx.bck/telegraf
-  echo "restored"
+  writeLog "restored"
 
 }
 
 backupDB()
 {
 
-  echo "deleting old backup"
+  writeLog "deleting old backup"
   rm /backup/influx.bck/ha/*
   rm /backup/influx.bck/telegraf/*
 
-  echo "backup ha db"
+  writeLog "backup ha db"
   docker exec -i influxdb influxd  backup -portable -database ha -host 127.0.0.1:8088 /backup/influx.bck/ha
-  echo "done"
+  writeLog "done"
 
-  echo "backup telegraf db"
+  writeLog "backup telegraf db"
   docker exec -i influxdb influxd  backup -portable -database telegraf -host 127.0.0.1:8088 /backup/influx.bck/telegraf
-  echo "done"
+  writeLog "done"
 
 }
 
 saveImage()
 {
   if [ ! -d /backup/images/influxdb ]; then
-    echo "creating backup folder"
+    writeLog "creating backup folder"
     sudo mkdir -p /backup/images/influxdb/
     sudo chown pi:pi /backup/images/influxdb/
   fi
-  echo "starting docker image save"
+  writeLog "starting docker image save"
   docker save --output /backup/images/influxdb/influxdb.tar influxdb
-  echo "save compelted"
+  writeLog "save compelted"
 }
 
 loadImage()
 {
   if [ -f /backup/images/influxdb/influxdb.tar ]; then
-    echo "start loading influx image"
+    writeLog "start loading influx image"
     docker load  -i /backup/images/influxdb/influxdb.tar 
-    echo "load completed"
+    writeLog "load completed"
   else
-    echo "backup image not found /backup/images/influxdb/influxdb.tar"
+    writeLog "backup image not found /backup/images/influxdb/influxdb.tar"
   fi
 }
 
@@ -208,8 +216,8 @@ while [[ $# -gt 0 ]]; do
         ;;
         *)
         # Do whatever you want with extra options
-        echo "Unknown option '$key'"
-	echo "possible options are: run stop start stop save load restoredb backupdb remove setup"
+        writeLog "Unknown option '$key'"
+	writeLog "possible options are: run stop start stop save load restoredb backupdb remove setup"
         ;;
     esac
     # Shift after checking all the cases to get the next option

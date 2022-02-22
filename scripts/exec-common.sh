@@ -8,7 +8,7 @@ writeLog()
 
 }
 
-isRunning()
+isRunned()
 {
   if [ $(docker ps -a | grep $DOCKERNAME | wc -l) -eq 1 ]; then
     # true=0
@@ -19,9 +19,22 @@ isRunning()
   fi
 }
 
+isRunning()
+{
+  if [[ "$(docker ps --format '{{.Status}}' --filter "name=$DOCKERNAME" -a)" =~ "Up" ]]; then
+    # true=0
+    return 0
+  else
+    # false=1
+    return 1
+  fi
+}
+
 status()
 {
-  docker ps -a | grep $DOCKERNAME
+
+  writeLog "$DOCKERNAME status"
+  docker ps --filter "name=$DOCKERNAME" -a 
 }
 
 
@@ -76,14 +89,18 @@ setupDocker()
 
 startDocker()
 {
-  if [ $(docker ps -a | grep $DOCKERNAME | wc -l) -eq 0 ]; then
-    writeLog "$DOCKERNAME docker not present, call run"
-    runDocker
-  fi
+  if ! isRunning ; then
+    if [ $(docker ps -a | grep $DOCKERNAME | wc -l) -eq 0 ]; then
+      writeLog "$DOCKERNAME docker not present, call run"
+      runDocker
+    fi
 
-  writeLog "start $DOCKERNAME docker"
-  docker start $DOCKERNAME
-  writeLog "$DOCKERNAME started"
+    writeLog "start $DOCKERNAME docker"
+    docker start $DOCKERNAME
+    writeLog "$DOCKERNAME started"
+  else
+    writeLog "$DOCKERNAME already running"
+  fi
 }
 
 saveImage()

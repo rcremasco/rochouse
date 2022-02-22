@@ -46,7 +46,7 @@ setupFolder()
 
 runDocker()
 {
-  if ! isRunning ; then
+  if ! isRunned ; then
     writeLog "run influx docker"
     docker run -d --name=$DOCKERNAME \
         --restart=always \

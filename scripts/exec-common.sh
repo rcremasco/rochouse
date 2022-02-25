@@ -37,6 +37,33 @@ status()
   docker ps --filter "name=$DOCKERNAME" -a 
 }
 
+restoreDB()
+{
+  writeLog "restoreDB not Implemented"
+}
+
+backupDB()
+{
+  writeLog "backupDB not Implemented"
+}
+
+
+setupFolder()
+{
+  writeLog "setupFolder not Implemented"
+}
+
+runDocker()
+{
+  writeLog "runDocker not Implemented"
+}
+
+setupDocker()
+{
+  writeLog "setupDocker not Implemented"
+}
+
+
 
 removeImage()
 {

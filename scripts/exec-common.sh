@@ -1,5 +1,7 @@
 #!/bin/bash
 
+VIP="192.168.10.5"
+
 writeLog()
 {
 
@@ -67,9 +69,9 @@ setupDocker()
 
 removeImage()
 {
-  if [ $(docker image ls | grep $DOCKERIMAGE | wc -l) -eq 1 ]; then
+  if [ $(docker image ls | grep $DOCKERIMAGE | wc -l) -ge 1 ]; then
     writeLog "removing image $DOCKERIMAGE"
-    docker image rm $(docker image ls | grep influxdb | awk  '{print $3}')
+    docker image rm $(docker image ls | grep $DOCKERIMAGE | awk  '{print $3}')
   else
     writeLog "$DOCKERIMAGE image not found"
   fi
@@ -103,7 +105,7 @@ removeDocker()
 pullDocker()
 {
   writeLog "pulling $DOCKERNAME image"
-  docker pull $DOCKERIMAGE:1.8
+  docker pull $DOCKERIMAGE:$DOCKERVERSION
   writeLog "$DOCKERNAME pulled"
 }
 

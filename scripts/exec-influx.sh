@@ -20,6 +20,7 @@ INFLUX_CONF="$INFLUX_ROOT/etc"
 INFLUX_TYPESDB="$INFLUX_ROOT/types-db"
 DOCKERNAME="influxdb"
 DOCKERIMAGE="influxdb"
+DOCKERVERSION="1.8"
 
 SCRIPTPATH=$(dirname $0)
 source $SCRIPTPATH/exec-common.sh
@@ -50,14 +51,14 @@ runDocker()
     writeLog "run influx docker"
     docker run -d --name=$DOCKERNAME \
         --restart=always \
-        -p 8086:8086 \
-        -p 25826:25826/udp \
+        -p $VIP:8086:8086 \
+        -p $VIP:25826:25826/udp \
         -e INFLUXDB_GRAPHITE_ENABLED=true \
         -v $INFLUX_DATA:/var/lib/influxdb \
         -v $INFLUX_CONF/influxdb.conf:/etc/influxdb/influxdb.conf:ro \
         -v $INFLUX_TYPESDB/collectd-types.db:/usr/share/collectd/types.db:ro \
 	-v /backup:/backup \
-        $DOCKERIMAGE:1.8 -config /etc/influxdb/influxdb.conf
+        $DOCKERIMAGE:$DOCKERVERSION -config /etc/influxdb/influxdb.conf
     writeLog "runed"
 
     setupDocker

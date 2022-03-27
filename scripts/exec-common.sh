@@ -140,18 +140,18 @@ saveImage()
     sudo chown pi:pi /backup/images/$DOCKERNAME/
   fi
   writeLog "starting $DOCKERIMAGE docker image save"
-  docker save --output /backup/images/$DOCKERIMAGE/$DOCKERIMAGE.tar $DOCKERNAME
+  docker save --output /backup/images/$DOCKERNAME/$DOCKERNAME.tar $DOCKERNAME
   writeLog "$DOCKERIMAGE save compelted"
 }
 
 loadImage()
 {
-  if [ -f /backup/images/$DOCKERIMAGE/$DOCKERIMAGE.tar ]; then
+  if [ -f /backup/images/$DOCKERNAME/$DOCKERNAME.tar ]; then
     writeLog "start loading $DOCKERIMAGE image"
-    docker load  -i /backup/images/$DOCKERIMAGE/$DOCKERIMAGE.tar 
+    docker load  -i /backup/images/$DOCKERNAME/$DOCKERNAME.tar 
     writeLog "$DOCKERIMAGE load completed"
   else
-    writeLog "backup image not found /backup/images/$DOCKERIMAGE/$DOCKERIMAGE.tar"
+    writeLog "backup image not found /backup/images/$DOCKERNAME/$DOCKERNAME.tar"
   fi
 }
 

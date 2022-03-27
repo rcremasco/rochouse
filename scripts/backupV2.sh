@@ -13,15 +13,16 @@ localBackup()
 {
 
 writeLog "saving to USB key /docker ..."
-rsync -avrWS --exclude '/docker/influxdb/data/' --exclude '*.db' --inplace /docker /media/pi/RHBCK/docker
+sudo rsync -avrWS --exclude '/docker/influxdb/data/' --exclude '*.db' --inplace /docker /media/pi/RHBCK/docker
 
 if [ ! -d /media/pi/RHBCK/docker/images ]; then
   writeLog "Creating docker/images on USB key"
-  mkdir -p /media/pi/RHBCK/docker/images
+  sudo mkdir -p /media/pi/RHBCK/docker/images
+  sudo chown -R pi:pi /media/pi/RHBCK/docker
 fi
 
 writeLog "saving to USB key home-assistant image"
-docker save --output=/media/pi/RHBCK/docker/images/home-assistant.tar homeassistant/raspberrypi3-homeassistant
+docker save --output=/media/pi/RHBCK/docker/images/ha.tar homeassistant/raspberrypi3-homeassistant
 
 writeLog "saving to USB key deconz image"
 docker save --output=/media/pi/RHBCK/docker/images/deconz.tar deconzcommunity/deconz
@@ -34,7 +35,7 @@ writeLog "saving to USB key hik2ha-wrapper image"
 docker save --output=/media/pi/RHBCK/docker/images/hik2ha-wrapper.tar hik2ha-wrapper
 
 writeLog "saving to USB key docker-magicmirror image"
-docker save --output=/media/pi/RHBCK/docker/images/docker-magicmirror.tar bastilimbach/docker-magicmirror
+docker save --output=/media/pi/RHBCK/docker/images/mm.tar bastilimbach/docker-magicmirror
 
 writeLog "saving to USB key influxdb image"
 docker save --output=/media/pi/RHBCK/docker/images/influxdb.tar influxdb:1.8
@@ -49,27 +50,27 @@ writeLog "saving to USB key chronograf image"
 docker save --output=/media/pi/RHBCK/docker/images/chronograf.tar chronograf
 
 writeLog "saving to USB key node red-image"
-docker save --output=/media/pi/RHBCK/docker/images/node-red.tar nodered/node-red
+docker save --output=/media/pi/RHBCK/docker/images/node-red.tar nodered/nodered
 
 writeLog "saving to USB key mosquito image"
-docker save --output=/media/pi/RHBCK/docker/images/mosquito.tar eclipse-mosquitto
+docker save --output=/media/pi/RHBCK/docker/images/mqtt.tar eclipse-mosquitto
 
 if [ ! -d /media/pi/RHBCK/docker/backup ]; then
   writeLog "Creating docker/backup on USB key"
-  mkdir -p /media/pi/RHBCK/docker/backup
-  chown -R pi:pi /media/pi/RHBCK/docker/backup
+  sudo mkdir -p /media/pi/RHBCK/docker/backup
+  sudo chown -R pi:pi /media/pi/RHBCK/docker/backup
 fi
 
 
 writeLog "Exporting influxDb data"
-rm /backup/influx.bck/ha/*
-rm /backup/influx.bck/telegraf/*
+sudo rm /backup/influx.bck/ha/*
+sudo rm /backup/influx.bck/telegraf/*
 writeLog "exporting ha influx db"
 docker exec -i influxdb influxd  backup -portable -database ha -host 127.0.0.1:8088 /backup/influx.bck/ha
 writeLog "exporting telegraf influx db"
 docker exec -i influxdb influxd  backup -portable -database telegraf -host 127.0.0.1:8088 /backup/influx.bck/telegraf
 writeLog "Exporting to USB key influxDb data"
-rsync -avrWS --inplace /backup/influx.bck /media/pi/RHBCK/docker/backup
+sudo rsync -avrWS --inplace /backup/influx.bck /media/pi/RHBCK/docker/backup
 
 writeLog "Exporting to USB key home-assistant db"
 sqlite3 /docker/homeassistant/home-assistant_v2.db .dump | gzip -c > /media/pi/RHBCK/docker/backup/ha.db.gz
@@ -82,7 +83,6 @@ sqlite3 /docker/grafana/grafana.db .dump | gzip -c > /media/pi/RHBCK/docker/back
 
 sync
 sync
-
 
 }
 

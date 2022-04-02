@@ -141,7 +141,7 @@ saveImage()
   fi
   writeLog "starting $DOCKERIMAGE docker image save"
   docker save --output /backup/images/$DOCKERNAME/$DOCKERNAME.tar $DOCKERIMAGE
-  writeLog "$DOCKERIMAGE save compelted"
+  writeLog "$DOCKERIMAGE save completed"
 }
 
 loadImage()

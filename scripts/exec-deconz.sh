@@ -71,6 +71,37 @@ setupDocker()
   docker update  --restart=unless-stopped $DOCKERNAME
 }
 
+restoreDB()
+{
+
+  writeLog "going to restore deconz db"
+
+  writeLog "deleting old deconz db"
+  sudo rm -f /docker/deconz/zll.db 2>&1 | tee -a $LOGFILE
+
+  writeLog "restoring deconz db"
+  sudo zcat /media/pi/RHBCK/rochouse/backup/zll.db.gz | sudo sqlite3 /docker/deconz/zll.db 2>&1 | tee -a $LOGFILE
+
+  writeLog "setting deconz db permission"
+  sudo chown -R pi:pi /docker/deconz 2>&1 | tee -a $LOGFILE
+  writeLog "restored"
+
+
+
+}
+
+backupDB()
+{
+
+  writeLog "deleting old deconz db backup"
+  sudo rm /backup/zll.db.gz
+
+  writeLog "backup deconz db"
+  sqlite3 /docker/deconz/zll.db .dump | gzip -c > /backup/zll.db.gz
+  writeLog "done"
+
+}
+
 
 main "$@"
 

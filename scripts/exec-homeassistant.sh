@@ -53,6 +53,35 @@ setupDocker()
   docker update  --restart=unless-stopped $DOCKERNAME
 }
 
+restoreDB()
+{
+
+  writeLog "going to restore homeassistant db"
+
+  writeLog "deleting old ha db"
+  sudo rm -f /docker/homeassistant/home-assistant_v2.db 2>&1 | tee -a $LOGFILE
+
+  writeLog "restoring ha db"
+  sudo zcat /backup/ha.db.gz | sudo sqlite3 /docker/homeassistant/home-assistant_v2.db 2>&1 | tee -a $LOGFILE
+
+  writeLog "setting ha db permission"
+  sudo chown -R pi:pi /docker/homeassistant/home-assistant_v2.db 2>&1 | tee -a $LOGFILE
+  writeLog "restored"
+
+}
+
+backupDB()
+{
+
+  writeLog "deleting old ha db backup"
+  sudo rm /backup/ha.db.gz
+
+  writeLog "backup ha db"
+  sqlite3 /docker/homeassistant/home-assistant_v2.db .dump | gzip -c > /backup/ha.db.gz
+  writeLog "done"
+
+}
+
 
 main "$@"
 

@@ -50,6 +50,34 @@ setupDocker()
   docker update  --restart=unless-stopped $DOCKERNAME
 }
 
+restoreDB()
+{
+
+  writeLog "going to restore grafana db"
+
+  writeLog "deleting old grafana db"
+  sudo rm -f /docker/grafana/grafana.db 2>&1 | tee -a $LOGFILE
+
+  writeLog "restoring grafana db"
+  sudo zcat /backup/grafana.db.gz | sudo sqlite3 /docker/grafana/grafana.db 2>&1 | tee -a $LOGFILE
+
+  writeLog "setting grafana db permission"
+  sudo chown -R pi:pi /docker/homeassistant/home-assistant_v2.db 2>&1 | tee -a $LOGFILE
+  writeLog "restored"
+
+}
+
+backupDB()
+{
+
+  writeLog "deleting old grafana db backup"
+  sudo rm backup/grafana.db.gz
+
+  writeLog "backup granafa db"
+  sqlite3 /docker/grafana/grafana.db .dump | gzip -c > /backup/grafana.db.gz
+  writeLog "done"
+
+}
 
 main "$@"
 

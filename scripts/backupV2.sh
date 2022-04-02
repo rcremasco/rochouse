@@ -1,10 +1,14 @@
 #!/bin/bash
 
+SCRIPTPATH=$(dirname $0)
+LOGFILE="/tmp/backup.log"
+
+
 writeLog()
 {
 
     echo "$(date +"%Y/%m/%d %H:%M:%S") - $1"
-    echo "$(date +"%Y/%m/%d %H:%M:%S") - $1" >> /tmp/backup.log
+    echo "$(date +"%Y/%m/%d %H:%M:%S") - $1" >> $LOGFILE
 
 }
 
@@ -12,77 +16,62 @@ writeLog()
 localBackup()
 {
 
-writeLog "saving to USB key /docker ..."
-sudo rsync -avrWS --exclude '/docker/influxdb/data/' --exclude '*.db' --inplace /docker /media/pi/RHBCK/rochouse
+  writeLog "saving home-assistant image"
+  $SCRIPTPATH/exec-homeassistant.sh save 2>&1 | tee -a $LOGFILE
 
-if [ ! -d /media/pi/RHBCK/rochouse/images ]; then
-  writeLog "Creating docker/images on USB key"
-  sudo mkdir -p /media/pi/RHBCK/rochouse/images
-  sudo chown -R pi:pi /media/pi/RHBCK/rochouse
-fi
-
-writeLog "saving to USB key home-assistant image"
-docker save --output=/media/pi/RHBCK/rochouse/images/ha.tar homeassistant/raspberrypi3-homeassistant
-
-writeLog "saving to USB key deconz image"
-docker save --output=/media/pi/RHBCK/rochouse/images/deconz.tar deconzcommunity/deconz
+  writeLog "saving deconz image"
+  $SCRIPTPATH/exec-deconz.sh save 2>&1 | tee -a $LOGFILE
 
 
-writeLog "saving to USB key chain2 image"
-docker save --output=/media/pi/RHBCK/rochouse/images/chain2.tar chain2
+  writeLog "saving chain2 image"
+  $SCRIPTPATH/exec-chain2.sh save 2>&1 | tee -a $LOGFILE
+ 
+  writeLog "saving hik2ha-wrapper image"
+  $SCRIPTPATH/exec-hik2ha-wrapper.sh save 2>&1 | tee -a $LOGFILE
+ 
+  writeLog "saving docker-magicmirror image"
+  $SCRIPTPATH/exec-magicmirror.sh save 2>&1 | tee -a $LOGFILE
 
-writeLog "saving to USB key hik2ha-wrapper image"
-docker save --output=/media/pi/RHBCK/rochouse/images/hik2ha-wrapper.tar hik2ha-wrapper
+  writeLog "saving influxdb image"
+  $SCRIPTPATH/exec-influxdb.sh save 2>&1 | tee -a $LOGFILE
 
-writeLog "saving to USB key docker-magicmirror image"
-docker save --output=/media/pi/RHBCK/rochouse/images/mm.tar bastilimbach/docker-magicmirror
+  writeLog "saving grafana image"
+  $SCRIPTPATH/exec-grafana.sh save 2>&1 | tee -a $LOGFILE
 
-writeLog "saving to USB key influxdb image"
-docker save --output=/media/pi/RHBCK/rochouse/images/influxdb.tar influxdb:1.8
+  writeLog "saving telegraf image"
+  $SCRIPTPATH/exec-telegraf.sh save 2>&1 | tee -a $LOGFILE
 
-writeLog "saving to USB key grafana image"
-docker save --output=/media/pi/RHBCK/rochouse/images/grafana.tar grafana/grafana 
+  writeLog "saving chronograf image"
+  $SCRIPTPATH/exec-chronograf.sh save 2>&1 | tee -a $LOGFILE
 
-writeLog "saving to USB key telegraf image"
-docker save --output=/media/pi/RHBCK/rochouse/images/telegraf.tar telegraf
+  writeLog "saving node red-image"
+  $SCRIPTPATH/exec-nodered.sh save 2>&1 | tee -a $LOGFILE
 
-writeLog "saving to USB key chronograf image"
-docker save --output=/media/pi/RHBCK/rochouse/images/chronograf.tar chronograf
+  writeLog "saving mosquito image"
+  $SCRIPTPATH/exec-magicmirror.sh save 2>&1 | tee -a $LOGFILE
 
-writeLog "saving to USB key node red-image"
-docker save --output=/media/pi/RHBCK/rochouse/images/node-red.tar nodered/nodered
-
-writeLog "saving to USB key mosquito image"
-docker save --output=/media/pi/RHBCK/rochouse/images/mqtt.tar eclipse-mosquitto
-
-if [ ! -d /media/pi/RHBCK/rochouse/backup ]; then
-  writeLog "Creating docker/backup on USB key"
-  sudo mkdir -p /media/pi/RHBCK/rochouse/backup
-  sudo chown -R pi:pi /media/pi/RHBCK/rochouse/backup
-fi
+  writeLog "Exporting influxDb data"
+  $SCRIPTPATH/exec-influxdb.sh backupdb 2>&1 | tee -a $LOGFILE
 
 
-writeLog "Exporting influxDb data"
-sudo rm /backup/influx.bck/ha/*
-sudo rm /backup/influx.bck/telegraf/*
-writeLog "exporting ha influx db"
-docker exec -i influxdb influxd  backup -portable -database ha -host 127.0.0.1:8088 /backup/influx.bck/ha
-writeLog "exporting telegraf influx db"
-docker exec -i influxdb influxd  backup -portable -database telegraf -host 127.0.0.1:8088 /backup/influx.bck/telegraf
-writeLog "Exporting to USB key influxDb data"
-sudo rsync -avrWS --inplace /backup/influx.bck /media/pi/RHBCK/rochouse/backup
+  writeLog "Exporting home-assistant db"
+  $SCRIPTPATH/exec-homeassistant.sh backupdb 2>&1 | tee -a $LOGFILE
 
-writeLog "Exporting to USB key home-assistant db"
-sqlite3 /docker/homeassistant/home-assistant_v2.db .dump | gzip -c > /media/pi/RHBCK/rochouse/backup/ha.db.gz
+  writeLog "Exporting deconz db"
+  $SCRIPTPATH/exec-deconz.sh backupdb 2>&1 | tee -a $LOGFILE
 
-writeLog "Exporting to USB key deconz db"
-sqlite3 /docker/deconz/zll.db .dump | gzip -c > /media/pi/RHBCK/rochouse/backup/zll.db.gz
 
-writeLog "Exporting to USB key grafana db"
-sqlite3 /docker/grafana/grafana.db .dump | gzip -c > /media/pi/RHBCK/rochouse/backup/grafana.db.gz
+  writeLog "Exporting grafana db"
+  $SCRIPTPATH/exec-grafana.sh backupdb 2>&1 | tee -a $LOGFILE
 
-sync
-sync
+  writeLog "saving /docker to USB key"
+  sudo rsync -avrWS --exclude '/docker/influxdb/data/' --exclude '*.db' --inplace /docker /media/pi/RHBCK/rochouse
+
+  writeLog "saving /backup to USB key"
+  sudo rsync -avrWS  --inplace /backup /media/pi/RHBCK/rochouse
+
+  sync
+  sync
 
 }
 

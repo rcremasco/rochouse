@@ -54,14 +54,17 @@ localRestore()
 {
 
   writeLog "INFO - riprinstino della /docker"
-  sudo rsync -avrWS --inplace /media/pi/RHBCK/docker/docker / 2>&1 | tee -a $LOGFILE
-  sudo chown pi:pi /media/pi/RHBCK/docker 2>&1 | tee -a $LOGFILE
+  sudo rsync -avrWS --inplace /media/pi/RHBCK/rochouse/docker / 2>&1 | tee -a $LOGFILE
+  sudo chown -R pi:pi /docker 2>&1 | tee -a $LOGFILE
 
-  docker system prune -a -f
+  docker system prune -a -f 2>&1 | tee -a $LOGFILE
 
-#  writeLog "INFO - ripristino immagine docker chain2"
-#  $SCRIPTPATH/exec-chain2.sh stop remove removeImage load
-#  docker load -i /media/pi/RHBCK/docker/images/chain2.tar
+  writeLog "INFO - riprinstino della /backup"
+  sudo rsync -avrWS --inplace /media/pi/RHBCK/rochouse/backup / 2>&1 | tee -a $LOGFILE
+  sudo chown -R pi:pi /backup 2>&1 | tee -a $LOGFILE
+
+  writeLog "INFO - ripristino immagine docker chain2"
+  $SCRIPTPATH/exec-chain2.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - ripristino immagine docker chronograf"
   $SCRIPTPATH/exec-chronograf.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
@@ -75,9 +78,8 @@ localRestore()
   writeLog "INFO - ripristino immagine docker grafana"
   $SCRIPTPATH/exec-grafana.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
 
-#  writeLog "INFO - ripristino immagine docker hik2ha-wrapper"
-#  $SCRIPTPATH/exec-hik2ha-wrapper.sh stop remove removeImage load
-#  docker load -i /media/pi/RHBCK/docker/images/hik2ha-wrapper.tar
+  writeLog "INFO - ripristino immagine docker hik2ha-wrapper"
+  $SCRIPTPATH/exec-hik2ha-wrapper.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - ripristino immagine docker home-assistant"
   $SCRIPTPATH/exec-homeassistant.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
@@ -97,22 +99,14 @@ localRestore()
   docker images 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - Ripristino database deconz"
-  sudo rm -f /docker/deconz/zll.db 2>&1 | tee -a $LOGFILE
-  sudo zcat /media/pi/RHBCK/docker/backup/zll.db.gz | sudo sqlite3 /docker/deconz/zll.db 2>&1 | tee -a $LOGFILE
-  sudo chown -R pi:pi /docker/deconz 2>&1 | tee -a $LOGFILE
+  $SCRIPTPATH/exec-deconz.sh restoredb 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - Restoring home assistant db"
-  sudo rm -f /docker/homeassistant/home-assistant_v2.db 2>&1 | tee -a $LOGFILE
-  sudo zcat /media/pi/RHBCK/docker/backup/ha.db.gz | sudo sqlite3 /docker/homeassistant/home-assistant_v2.db 2>&1 | tee -a $LOGFILE
-  sudo chown -R pi:pi /docker/homeassistant/home-assistant_v2.db 2>&1 | tee -a $LOGFILE
-
+  $SCRIPTPATH/exec-homeassistant.sh restoredb 2>&1 | tee -a $LOGFILE
+ 
   writeLog "INFO - Restoring grafana db"
-  sudo rm -f /docker/grafana/grafana.db 2>&1 | tee -a $LOGFILE
-  sudo zcat /media/pi/RHBCK/docker/backup/grafana.db.gz | sudo sqlite3 /docker/grafana/grafana.db 2>&1 | tee -a $LOGFILE
-  sudo chown -R 472:472 /docker/grafana/grafana.db 2>&1 | tee -a $LOGFILE
-
-
-
+  $SCRIPTPATH/exec-grafana.sh restoredb 2>&1 | tee -a $LOGFILE
+ 
 }
 
 writeLog "INFO - Processo di boot dello SLAVE..."

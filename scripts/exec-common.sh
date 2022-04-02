@@ -140,7 +140,7 @@ saveImage()
     sudo chown pi:pi /backup/images/$DOCKERNAME/
   fi
   writeLog "starting $DOCKERIMAGE docker image save"
-  docker save --output /backup/images/$DOCKERNAME/$DOCKERNAME.tar $DOCKERNAME
+  docker save --output /backup/images/$DOCKERNAME/$DOCKERNAME.tar $DOCKERIMAGE
   writeLog "$DOCKERIMAGE save compelted"
 }
 

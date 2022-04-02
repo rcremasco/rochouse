@@ -3,6 +3,8 @@
 #
 #
 
+SCRIPTPATH=$(dirname $0)
+LOGFILE="/tmp/slaveStart.log"
 
 writeLog()
 {
@@ -33,11 +35,11 @@ checkPrerequisiteOK()
   if [[ -d /docker ]]
   then
     writeLog "INFO - directory /docker presente, confermo permessi."
-    sudo chown root:docker /docker
+    sudo chown root:docker /docker 2>&1 | tee -a $LOGFILE
   else
     writeLog "INFO - directory /docker assente, viene creata"
-    sudo mkdir /docker
-    sudo chown root:docker /docker
+    sudo mkdir /docker 2>&1 | tee -a $LOGFILE
+    sudo chown root:docker /docker 2>&1 | tee -a $LOGFILE
   fi
 
   if [ $check -gt 0 ]; then
@@ -52,70 +54,62 @@ localRestore()
 {
 
   writeLog "INFO - riprinstino della /docker"
-  sudo rsync -avrWS --inplace /media/pi/RHBCK/docker/docker /
+  sudo rsync -avrWS --inplace /media/pi/RHBCK/docker/docker / 2>&1 | tee -a $LOGFILE
+  sudo chown pi:pi /media/pi/RHBCK/docker 2>&1 | tee -a $LOGFILE
 
   docker system prune -a -f
 
-  writeLog "INFO - ripristino immagine docker chain2"
-  sudo chown pi:pi /media/pi/RHBCK/docker/images/chain2.tar
-  docker load -i /media/pi/RHBCK/docker/images/chain2.tar
+#  writeLog "INFO - ripristino immagine docker chain2"
+#  $SCRIPTPATH/exec-chain2.sh stop remove removeImage load
+#  docker load -i /media/pi/RHBCK/docker/images/chain2.tar
 
   writeLog "INFO - ripristino immagine docker chronograf"
-  sudo chown pi:pi /media/pi/RHBCK/docker/images/chronograf.tar
-  docker load -i /media/pi/RHBCK/docker/images/chronograf.tar
+  $SCRIPTPATH/exec-chronograf.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - ripristino immagine docker deconz"
-  sudo chown pi:pi /media/pi/RHBCK/docker/images/deconz.tar
-  docker load -i /media/pi/RHBCK/docker/images/deconz.tar
+  $SCRIPTPATH/exec-deconz.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - ripristino immagine docker docker-magicmirror"
-  sudo chown pi:pi /media/pi/RHBCK/docker/images/docker-magicmirror.tar
-  docker load -i /media/pi/RHBCK/docker/images/docker-magicmirror.tar
+  $SCRIPTPATH/exec-magicmirror.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - ripristino immagine docker grafana"
-  sudo chown pi:pi /media/pi/RHBCK/docker/images/grafana.tar
-  docker load -i /media/pi/RHBCK/docker/images/grafana.tar
+  $SCRIPTPATH/exec-grafana.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
 
-  writeLog "INFO - ripristino immagine docker hik2ha-wrapper"
-  sudo chown pi:pi /media/pi/RHBCK/docker/images/hik2ha-wrapper.tar
-  docker load -i /media/pi/RHBCK/docker/images/hik2ha-wrapper.tar
+#  writeLog "INFO - ripristino immagine docker hik2ha-wrapper"
+#  $SCRIPTPATH/exec-hik2ha-wrapper.sh stop remove removeImage load
+#  docker load -i /media/pi/RHBCK/docker/images/hik2ha-wrapper.tar
 
   writeLog "INFO - ripristino immagine docker home-assistant"
-  sudo chown pi:pi /media/pi/RHBCK/docker/images/home-assistant.tar
-  docker load -i /media/pi/RHBCK/docker/images/home-assistant.tar
+  $SCRIPTPATH/exec-homeassistant.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - ripristino immagine docker influxdb"
-  sudo chown pi:pi /media/pi/RHBCK/docker/images/influxdb.tar
-  docker load -i /media/pi/RHBCK/docker/images/influxdb.tar
+  $SCRIPTPATH/exec-influxdb.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - ripristino immagine docker mosquito"
-  sudo chown pi:pi /media/pi/RHBCK/docker/images/mosquito.tar
-  docker load -i /media/pi/RHBCK/docker/images/mosquito.tar
+  $SCRIPTPATH/exec-magicmirror.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - ripristino immagine docker node-red"
-  sudo chown pi:pi /media/pi/RHBCK/docker/images/node-red.tar
-  docker load -i /media/pi/RHBCK/docker/images/node-red.tar
+  $SCRIPTPATH/exec-nodered.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - ripristino immagine docker telegraf"
-  sudo chown pi:pi /media/pi/RHBCK/docker/images/telegraf.tar
-  docker load -i /media/pi/RHBCK/docker/images/telegraf.tar
+  $SCRIPTPATH/exec-telegraf.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
 
-  docker images
+  docker images 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - Ripristino database deconz"
-  sudo rm -f /docker/deconz/zll.db
-  sudo zcat /media/pi/RHBCK/docker/backup/zll.db.gz | sudo sqlite3 /docker/deconz/zll.db
-  sudo chown -R pi:pi /docker/deconz
+  sudo rm -f /docker/deconz/zll.db 2>&1 | tee -a $LOGFILE
+  sudo zcat /media/pi/RHBCK/docker/backup/zll.db.gz | sudo sqlite3 /docker/deconz/zll.db 2>&1 | tee -a $LOGFILE
+  sudo chown -R pi:pi /docker/deconz 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - Restoring home assistant db"
-  sudo rm -f /docker/homeassistant/home-assistant_v2.db
-  sudo zcat /media/pi/RHBCK/docker/backup/ha.db.gz | sudo sqlite3 /docker/homeassistant/home-assistant_v2.db
-  sudo chown -R pi:pi /docker/homeassistant/home-assistant_v2.db
+  sudo rm -f /docker/homeassistant/home-assistant_v2.db 2>&1 | tee -a $LOGFILE
+  sudo zcat /media/pi/RHBCK/docker/backup/ha.db.gz | sudo sqlite3 /docker/homeassistant/home-assistant_v2.db 2>&1 | tee -a $LOGFILE
+  sudo chown -R pi:pi /docker/homeassistant/home-assistant_v2.db 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - Restoring grafana db"
-  sudo rm -f /docker/grafana/grafana.db
-  sudo zcat /media/pi/RHBCK/docker/backup/grafana.db.gz | sudo sqlite3 /docker/grafana/grafana.db
-  sudo chown -R 472:472 /docker/grafana/grafana.db
+  sudo rm -f /docker/grafana/grafana.db 2>&1 | tee -a $LOGFILE
+  sudo zcat /media/pi/RHBCK/docker/backup/grafana.db.gz | sudo sqlite3 /docker/grafana/grafana.db 2>&1 | tee -a $LOGFILE
+  sudo chown -R 472:472 /docker/grafana/grafana.db 2>&1 | tee -a $LOGFILE
 
 
 

@@ -33,7 +33,7 @@ localBackup()
   $SCRIPTPATH/exec-magicmirror.sh save 2>&1 | tee -a $LOGFILE
 
   writeLog "saving influxdb image"
-  $SCRIPTPATH/exec-influxdb.sh save 2>&1 | tee -a $LOGFILE
+  $SCRIPTPATH/exec-influx.sh save 2>&1 | tee -a $LOGFILE
 
   writeLog "saving grafana image"
   $SCRIPTPATH/exec-grafana.sh save 2>&1 | tee -a $LOGFILE
@@ -51,7 +51,7 @@ localBackup()
   $SCRIPTPATH/exec-magicmirror.sh save 2>&1 | tee -a $LOGFILE
 
   writeLog "Exporting influxDb data"
-  $SCRIPTPATH/exec-influxdb.sh backupdb 2>&1 | tee -a $LOGFILE
+  $SCRIPTPATH/exec-influx.sh backupdb 2>&1 | tee -a $LOGFILE
 
 
   writeLog "Exporting home-assistant db"

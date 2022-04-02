@@ -56,7 +56,12 @@ restoreDB()
   writeLog "going to restore grafana db"
 
   writeLog "deleting old grafana db"
-  sudo rm -f /docker/grafana/grafana.db 2>&1 | tee -a $LOGFILE
+  if [ -f /docker/grafana/grafana.db ]; then
+    sudo rm -f /docker/grafana/grafana.db 2>&1 | tee -a $LOGFILE
+    writeLog "deleted"
+  else
+    writeLog "not present"
+  fi
 
   writeLog "restoring grafana db"
   sudo zcat /backup/grafana.db.gz | sudo sqlite3 /docker/grafana/grafana.db 2>&1 | tee -a $LOGFILE

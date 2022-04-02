@@ -5,8 +5,8 @@ VIP="192.168.10.5"
 writeLog()
 {
 
-    echo "$(date +"%Y/%m/%d %H:%M:%S") - $1"
-#    echo "$(date +"%Y/%m/%d %H:%M:%S") - $1" >> /tmp/backup.log
+    echo "$(date +"%Y/%m/%d %H:%M:%S") - .. $1"
+#    echo "$(date +"%Y/%m/%d %H:%M:%S") - .. $1" >> /tmp/backup.log
 
 }
 

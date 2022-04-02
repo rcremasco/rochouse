@@ -13,52 +13,52 @@ localBackup()
 {
 
 writeLog "saving to USB key /docker ..."
-sudo rsync -avrWS --exclude '/docker/influxdb/data/' --exclude '*.db' --inplace /docker /media/pi/RHBCK/docker
+sudo rsync -avrWS --exclude '/docker/influxdb/data/' --exclude '*.db' --inplace /docker /media/pi/RHBCK/rochouse
 
-if [ ! -d /media/pi/RHBCK/docker/images ]; then
+if [ ! -d /media/pi/RHBCK/rochouse/images ]; then
   writeLog "Creating docker/images on USB key"
-  sudo mkdir -p /media/pi/RHBCK/docker/images
-  sudo chown -R pi:pi /media/pi/RHBCK/docker
+  sudo mkdir -p /media/pi/RHBCK/rochouse/images
+  sudo chown -R pi:pi /media/pi/RHBCK/rochouse
 fi
 
 writeLog "saving to USB key home-assistant image"
-docker save --output=/media/pi/RHBCK/docker/images/ha.tar homeassistant/raspberrypi3-homeassistant
+docker save --output=/media/pi/RHBCK/rochouse/images/ha.tar homeassistant/raspberrypi3-homeassistant
 
 writeLog "saving to USB key deconz image"
-docker save --output=/media/pi/RHBCK/docker/images/deconz.tar deconzcommunity/deconz
+docker save --output=/media/pi/RHBCK/rochouse/images/deconz.tar deconzcommunity/deconz
 
 
 writeLog "saving to USB key chain2 image"
-docker save --output=/media/pi/RHBCK/docker/images/chain2.tar chain2
+docker save --output=/media/pi/RHBCK/rochouse/images/chain2.tar chain2
 
 writeLog "saving to USB key hik2ha-wrapper image"
-docker save --output=/media/pi/RHBCK/docker/images/hik2ha-wrapper.tar hik2ha-wrapper
+docker save --output=/media/pi/RHBCK/rochouse/images/hik2ha-wrapper.tar hik2ha-wrapper
 
 writeLog "saving to USB key docker-magicmirror image"
-docker save --output=/media/pi/RHBCK/docker/images/mm.tar bastilimbach/docker-magicmirror
+docker save --output=/media/pi/RHBCK/rochouse/images/mm.tar bastilimbach/docker-magicmirror
 
 writeLog "saving to USB key influxdb image"
-docker save --output=/media/pi/RHBCK/docker/images/influxdb.tar influxdb:1.8
+docker save --output=/media/pi/RHBCK/rochouse/images/influxdb.tar influxdb:1.8
 
 writeLog "saving to USB key grafana image"
-docker save --output=/media/pi/RHBCK/docker/images/grafana.tar grafana/grafana 
+docker save --output=/media/pi/RHBCK/rochouse/images/grafana.tar grafana/grafana 
 
 writeLog "saving to USB key telegraf image"
-docker save --output=/media/pi/RHBCK/docker/images/telegraf.tar telegraf
+docker save --output=/media/pi/RHBCK/rochouse/images/telegraf.tar telegraf
 
 writeLog "saving to USB key chronograf image"
-docker save --output=/media/pi/RHBCK/docker/images/chronograf.tar chronograf
+docker save --output=/media/pi/RHBCK/rochouse/images/chronograf.tar chronograf
 
 writeLog "saving to USB key node red-image"
-docker save --output=/media/pi/RHBCK/docker/images/node-red.tar nodered/nodered
+docker save --output=/media/pi/RHBCK/rochouse/images/node-red.tar nodered/nodered
 
 writeLog "saving to USB key mosquito image"
-docker save --output=/media/pi/RHBCK/docker/images/mqtt.tar eclipse-mosquitto
+docker save --output=/media/pi/RHBCK/rochouse/images/mqtt.tar eclipse-mosquitto
 
-if [ ! -d /media/pi/RHBCK/docker/backup ]; then
+if [ ! -d /media/pi/RHBCK/rochouse/backup ]; then
   writeLog "Creating docker/backup on USB key"
-  sudo mkdir -p /media/pi/RHBCK/docker/backup
-  sudo chown -R pi:pi /media/pi/RHBCK/docker/backup
+  sudo mkdir -p /media/pi/RHBCK/rochouse/backup
+  sudo chown -R pi:pi /media/pi/RHBCK/rochouse/backup
 fi
 
 
@@ -70,16 +70,16 @@ docker exec -i influxdb influxd  backup -portable -database ha -host 127.0.0.1:8
 writeLog "exporting telegraf influx db"
 docker exec -i influxdb influxd  backup -portable -database telegraf -host 127.0.0.1:8088 /backup/influx.bck/telegraf
 writeLog "Exporting to USB key influxDb data"
-sudo rsync -avrWS --inplace /backup/influx.bck /media/pi/RHBCK/docker/backup
+sudo rsync -avrWS --inplace /backup/influx.bck /media/pi/RHBCK/rochouse/backup
 
 writeLog "Exporting to USB key home-assistant db"
-sqlite3 /docker/homeassistant/home-assistant_v2.db .dump | gzip -c > /media/pi/RHBCK/docker/backup/ha.db.gz
+sqlite3 /docker/homeassistant/home-assistant_v2.db .dump | gzip -c > /media/pi/RHBCK/rochouse/backup/ha.db.gz
 
 writeLog "Exporting to USB key deconz db"
-sqlite3 /docker/deconz/zll.db .dump | gzip -c > /media/pi/RHBCK/docker/backup/zll.db.gz
+sqlite3 /docker/deconz/zll.db .dump | gzip -c > /media/pi/RHBCK/rochouse/backup/zll.db.gz
 
 writeLog "Exporting to USB key grafana db"
-sqlite3 /docker/grafana/grafana.db .dump | gzip -c > /media/pi/RHBCK/docker/backup/grafana.db.gz
+sqlite3 /docker/grafana/grafana.db .dump | gzip -c > /media/pi/RHBCK/rochouse/backup/grafana.db.gz
 
 sync
 sync

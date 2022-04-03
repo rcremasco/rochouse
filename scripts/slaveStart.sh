@@ -98,8 +98,11 @@ localRestore()
 
   docker images 2>&1 | tee -a $LOGFILE
 
+  writeLog "attivo il VIP"
+  $SCRIPTPATH/exec-startVip.sh
+
   writeLog "INFO - Ripristino database influx"
-  $SCRIPTPATH/exec-influx.sh restoredb 2>&1 | tee -a $LOGFILE
+  $SCRIPTPATH/exec-influx.sh stop start restoredb stop 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - Ripristino database deconz"
   $SCRIPTPATH/exec-deconz.sh restoredb 2>&1 | tee -a $LOGFILE

@@ -85,7 +85,7 @@ localRestore()
   $SCRIPTPATH/exec-homeassistant.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - ripristino immagine docker influxdb"
-  $SCRIPTPATH/exec-influxdb.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
+  $SCRIPTPATH/exec-influx.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - ripristino immagine docker mosquito"
   $SCRIPTPATH/exec-magicmirror.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
@@ -97,6 +97,9 @@ localRestore()
   $SCRIPTPATH/exec-telegraf.sh stop remove removeImage load 2>&1 | tee -a $LOGFILE
 
   docker images 2>&1 | tee -a $LOGFILE
+
+  writeLog "INFO - Ripristino database influx"
+  $SCRIPTPATH/exec-influx.sh restoredb 2>&1 | tee -a $LOGFILE
 
   writeLog "INFO - Ripristino database deconz"
   $SCRIPTPATH/exec-deconz.sh restoredb 2>&1 | tee -a $LOGFILE

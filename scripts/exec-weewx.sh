@@ -16,8 +16,8 @@ setupFolder()
 {
   # Creazione directory
   if [ ! -d  $WEEWX_ROOT ]; then
-    mkdir -p $WEEWX_ROOT
-    chown -R 1111:1111 $WEEWX_ROOT
+    sudo mkdir -p $WEEWX_ROOT
+    sudo chown -R 1111:1111 $WEEWX_ROOT
     writeLog "$WEEWX_ROOT created"
   else
     writeLog "$WEEWX_ROOT already present"

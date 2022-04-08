@@ -36,6 +36,13 @@ setupFolder()
     writeLog "$WEEWX_ROOT/html already present"
   fi
 
+  if [ ! -d  $WEEWX_ROOT/log ]; then
+    sudo mkdir -p $WEEWX_ROOT/log
+    writeLog "$WEEWX_ROOT/log created"
+  else
+    writeLog "$WEEWX_ROOT/log already present"
+  fi
+
   sudo chown -R pi:pi $WEEWX_ROOT
 
 }
@@ -47,6 +54,7 @@ runDocker()
     writeLog "run $DOCKERNAME docker"
     docker run -d --name=$DOCKERNAME \
         -v $WEEWX_ROOT/data:/data \
+        -v $WEEWX_ROOT/log:/var/log \
         -v $WEEWX_ROOT/html:/home/weewx/public_html \
         -e TZ=Europe/Rome \
         --restart=always \

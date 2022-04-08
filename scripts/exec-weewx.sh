@@ -49,8 +49,6 @@ runDocker()
         -v $WEEWX_ROOT/data:/data \
         -v $WEEWX_ROOT/html:/home/weewx/public_html \
         -e TZ=Europe/Rome \
-#        -e WEEWX_UID=1111 \
-#        -e WEEWX_GID=1111 \
         --restart=always \
         $DOCKERIMAGE:$DOCKERVERSION
 

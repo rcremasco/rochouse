@@ -57,6 +57,7 @@ runDocker()
         -v $WEEWX_ROOT/log:/var/log \
         -v $WEEWX_ROOT/html:/home/weewx/public_html \
         -e TZ=Europe/Rome \
+        -e DEBBASE_SYSLOG=internal \
         --restart=always \
         $DOCKERIMAGE:$DOCKERVERSION
 

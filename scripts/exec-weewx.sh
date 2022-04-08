@@ -17,11 +17,26 @@ setupFolder()
   # Creazione directory
   if [ ! -d  $WEEWX_ROOT ]; then
     sudo mkdir -p $WEEWX_ROOT
-    sudo chown -R 1111:1111 $WEEWX_ROOT
     writeLog "$WEEWX_ROOT created"
   else
     writeLog "$WEEWX_ROOT already present"
   fi
+
+  if [ ! -d  $WEEWX_ROOT/data ]; then
+    sudo mkdir -p $WEEWX_ROOT/data
+    writeLog "$WEEWX_ROOT/data created"
+  else
+    writeLog "$WEEWX_ROOT/data already present"
+  fi
+
+  if [ ! -d  $WEEWX_ROOT/html ]; then
+    sudo mkdir -p $WEEWX_ROOT/html
+    writeLog "$WEEWX_ROOT/html created"
+  else
+    writeLog "$WEEWX_ROOT/html already present"
+  fi
+
+  sudo chown -R 1111:1111 $WEEWX_ROOT
 
 }
 
@@ -32,7 +47,8 @@ runDocker()
     writeLog "run $DOCKERNAME docker"
     docker run -d --name=$DOCKERNAME \
         -v $WEEWX_ROOT/data:/data \
-        -e TIMEZONE=Europe/Rome \
+        -v $WEEWX_ROOT/html:/home/weewx/public_html \
+        -e TZ=Europe/Rome \
         -e WEEWX_UID=1111 \
         -e WEEWX_GID=1111 \
         --restart=always \

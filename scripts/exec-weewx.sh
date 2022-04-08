@@ -40,8 +40,7 @@ setupFolder()
 
 }
 
-#temporaneo
-VIP=192.168.10.4
+
 
 runDocker()
 {
@@ -50,7 +49,7 @@ runDocker()
     docker run --privileged -d --name=$DOCKERNAME \
         -v $WEEWX_ROOT/data:/data \
         -v $WEEWX_ROOT/html:/home/weewx/public_html \
-        -p $VIP:1666:1666 \
+        --net=host \
         -e TZ=Europe/Rome \
         --restart=always \
         $DOCKERIMAGE:$DOCKERVERSION

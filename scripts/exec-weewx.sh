@@ -4,8 +4,8 @@
 APP="/docker"
 
 DOCKERNAME="weewx"
-DOCKERIMAGE="instantlinux/weewx"
-DOCKERVERSION="latest"
+DOCKERIMAGE="felddy/weewx"
+DOCKERVERSION="nightly"
 
 WEEWX_ROOT=$APP/$DOCKERNAME
 

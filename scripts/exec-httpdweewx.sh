@@ -3,7 +3,7 @@
 
 APP="/docker"
 
-DOCKERNAME="httpdweewx"
+DOCKERNAME="httpd-weewx"
 DOCKERIMAGE="httpd"
 DOCKERVERSION="2.4"
 

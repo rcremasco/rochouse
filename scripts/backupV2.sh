@@ -133,7 +133,7 @@ sqlite3 /docker/grafana/grafana.db .dump | gzip -c > /backup/grafana.db.gz
 writeLog "Saving exported data"
 rclone delete GDRIVE:raspi/backup/influx.bck/ha  --stats-one-line-date -P --stats 10m
 rclone delete GDRIVE:raspi/backup/influx.bck/telegraf  --stats-one-line-date -P --stats 10m
-rclone sync /backup/ GDRIVE:raspi/backup/  --stats-one-line-date -P --stats 10m
+rclone sync /backup/ GDRIVE:raspi/backup/  --exclude images --stats-one-line-date -P --stats 10m
 
 writeLog "Saving openvpn config"
 rclone sync /etc/openvpn/ GDRIVE:raspi/etc/openvpn  --stats-one-line-date -P --stats 10m

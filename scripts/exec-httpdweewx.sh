@@ -10,6 +10,7 @@ DOCKERVERSION="2.4"
 
 HTTPDWEEWX_ROOT=$APP/$DOCKERNAME
 HTTPDWEEWX_CONF=$HTTPDWEEWX_ROOT/conf
+HTTPDWEEWX_LOG=$HTTPDWEEWX_ROOT/log
 
 SCRIPTPATH=$(dirname $0)
 source $SCRIPTPATH/exec-common.sh
@@ -30,6 +31,14 @@ setupFolder()
   else
     writeLog "$HTTPDWEEWX_CONF already present"
   fi
+
+if [ ! -d  $HTTPDWEEWX_LOG ]; then
+    sudo mkdir -p $HTTPDWEEWX_LOG
+    writeLog "$HTTPDWEEWX_LOG created"
+  else
+    writeLog "$HTTPDWEEWX_LOG already present"
+  fi
+
 #  sudo chown -R 421:421 $HTTPDWEEWX_ROOT
 
 }
@@ -44,6 +53,7 @@ runDocker()
     docker run -d --name=$DOCKERNAME \
         -v /docker/weewx/html:/usr/local/apache2/htdocs \
         -v $HTTPDWEEWX_CONF:/usr/local/apache2/conf \
+        -v $HTTPDWEEWX_LOG:/var/log/apache2 \
         -p $VIP:8666:80 \
         --restart=always \
         $DOCKERIMAGE:$DOCKERVERSION

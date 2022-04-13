@@ -35,7 +35,7 @@ runDocker()
     writeLog "run $DOCKERNAME docker"
     docker run -d --name=$DOCKERNAME \
         -v /docker/weewx/html:/usr/local/apache2/htdocs \
-        -p $VIP:8666:8666 \
+        -p $VIP:8666:80 \
         --restart=always \
         $DOCKERIMAGE:$DOCKERVERSION
 

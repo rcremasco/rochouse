@@ -4,8 +4,8 @@
 APP="/docker"
 
 DOCKERNAME="httpdweewx"
-DOCKERIMAGE="tecmint-web"
-DOCKERVERSION="latest"
+DOCKERIMAGE="httpd"
+DOCKERVERSION="2.4"
 
 HTTPDW_ROOT=$APP/$DOCKERNAME
 

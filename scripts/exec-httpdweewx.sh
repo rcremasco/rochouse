@@ -6,7 +6,7 @@ APP="/docker"
 
 DOCKERNAME="httpd-weewx"
 DOCKERIMAGE="httpd"
-DOCKERVERSION="2.4-alpine"
+DOCKERVERSION="2.4-bullseye"
 
 HTTPDWEEWX_ROOT=$APP/$DOCKERNAME
 HTTPDWEEWX_CONF=$HTTPDWEEWX_ROOT/conf
@@ -50,7 +50,7 @@ runDocker()
 {
   if ! isRunned ; then
     writeLog "run $DOCKERNAME docker"
-    docker run -d --name=$DOCKERNAME \
+    docker run -d --name=$DOCKERNAME --privileged \
         -v /docker/weewx/html:/usr/local/apache2/htdocs \
         -v $HTTPDWEEWX_CONF:/usr/local/apache2/conf \
         -v $HTTPDWEEWX_LOG:/var/log/apache2 \

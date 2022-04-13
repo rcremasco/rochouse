@@ -26,7 +26,8 @@ setupFolder()
 
 }
 
-
+#temporaneo
+VIP=192.168.10.4
 
 runDocker()
 {
@@ -34,7 +35,7 @@ runDocker()
     writeLog "run $DOCKERNAME docker"
     docker run -d --name=$DOCKERNAME \
         -v /docker/weewx/html:/usr/local/apache2/htdocs \
-        -p 8666:8666 \        
+        -p $VIP:8666:8666 \        
         --restart=always \
         $DOCKERIMAGE:$DOCKERVERSION
 

@@ -1,0 +1,11 @@
+configobj
+paho-mqtt
+pyserial
+pyusb
+setuptools
+wheel
+image
+Cheetah3
+Pillow
+requests
+six

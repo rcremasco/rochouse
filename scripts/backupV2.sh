@@ -22,7 +22,6 @@ localBackup()
   writeLog "saving deconz image"
   $SCRIPTPATH/exec-deconz.sh save 2>&1 | tee -a $LOGFILE
 
-
   writeLog "saving chain2 image"
   $SCRIPTPATH/exec-chain2.sh save 2>&1 | tee -a $LOGFILE
  
@@ -50,9 +49,14 @@ localBackup()
   writeLog "saving mosquito image"
   $SCRIPTPATH/exec-magicmirror.sh save 2>&1 | tee -a $LOGFILE
 
+  writeLog "saving weewx image"
+  $SCRIPTPATH/exec-weewx.sh save 2>&1 | tee -a $LOGFILE
+
+  writeLog "saving httpd-weewx image"
+  $SCRIPTPATH/exec-httpd-weewx.sh save 2>&1 | tee -a $LOGFILE
+
   writeLog "Exporting influxDb data"
   $SCRIPTPATH/exec-influx.sh backupdb 2>&1 | tee -a $LOGFILE
-
 
   writeLog "Exporting home-assistant db"
   $SCRIPTPATH/exec-homeassistant.sh backupdb 2>&1 | tee -a $LOGFILE
@@ -60,9 +64,11 @@ localBackup()
   writeLog "Exporting deconz db"
   $SCRIPTPATH/exec-deconz.sh backupdb 2>&1 | tee -a $LOGFILE
 
-
   writeLog "Exporting grafana db"
   $SCRIPTPATH/exec-grafana.sh backupdb 2>&1 | tee -a $LOGFILE
+
+  writeLog "Exporting weewx db"
+  $SCRIPTPATH/exec-weewx.sh backupdb 2>&1 | tee -a $LOGFILE
 
   writeLog "saving /docker to USB key"
   sudo rsync -avrWS --exclude '/docker/influxdb/data/' --exclude '*.db' --inplace /docker /media/pi/RHBCK/rochouse

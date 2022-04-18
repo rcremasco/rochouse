@@ -2,8 +2,8 @@
 
 
 APP="/docker"
-DOCKERNAME="hic2ha-wrapper"
-DOCKERIMAGE="hic2ha-wrapper"
+DOCKERNAME="hik2ha-wrapper"
+DOCKERIMAGE="hik2ha-wrapper"
 DOCKERVERSION="latest"
 HIK2HA_ROOT=$APP/$DOCKERNAME
 
@@ -28,8 +28,8 @@ runDocker()
 {
   if ! isRunned ; then
     writeLog "buildind image"
-    cd /home/pi/rochouse/hic2ha-wrapper
-    docker build  -t hic2ha-wrapper .
+    cd /home/pi/rochouse/hik2ha-wrapper
+    docker build  -t hik2ha-wrapper .
     cd $SCRIPTPATH
 
 

@@ -22,17 +22,28 @@ class S(BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
         post_data = self.rfile.read(content_length) # <--- Gets the data itself
+        logging.info("Ciapalo: %s\n", self.client_address[0])
         logging.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
                 str(self.path), str(self.headers), post_data.decode('utf-8'))
 
+        if  self.client_address[0] == '192.168.10.201':
+                logging.info('Camera 25 cam1')
+                hook = 'camera1'
+
+        if  self.client_address[0] == '192.168.10.197':
+                logging.info('Camera 25A cam1')
+                hook = 'camera25a1'
+
+
         self._set_response()
         # self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
-        url = 'https://192.168.10.4:8123/api/webhook/camera1'
+        url = 'https://192.168.10.4:8123/api/webhook/'+hook
         headers = { 'Content-Type': 'application/json' }
         payload = { 'data': 'motion'}
         res = requests.post(url, json=payload, headers=headers, verify=False)
         print(res.status_code)
         print(res.text)
+
 
 
 def run(server_class=HTTPServer, handler_class=S, port=7667):

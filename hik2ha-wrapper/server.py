@@ -28,11 +28,23 @@ class S(BaseHTTPRequestHandler):
 
         if  self.client_address[0] == '192.168.10.201':
                 logging.info('Camera 25 cam1')
-                hook = 'camera1'
+                hook = 'camera25-1'
+
+        if  self.client_address[0] == '192.168.10.196':
+                logging.info('Camera 25 cam3')
+                hook = 'camera25-3'
 
         if  self.client_address[0] == '192.168.10.197':
                 logging.info('Camera 25A cam1')
-                hook = 'camera25a1'
+                hook = 'camera25a-1'
+
+        if  self.client_address[0] == '192.168.10.198':
+                logging.info('Camera 25A cam2')
+                hook = 'camera25a-2'
+
+        if  self.client_address[0] == '192.168.10.195':
+                logging.info('Camera 25A cam3')
+                hook = 'camera25a-3'
 
 
         self._set_response()

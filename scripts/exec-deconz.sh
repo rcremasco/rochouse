@@ -54,7 +54,7 @@ fi
         -e DECONZ_VNC_MODE=1 \
         -e DECONZ_VNC_PORT=5901 \
         -e DECONZ_WEB_PORT=81 \
-        $DOCKERIMAGE:DOCKERVERSION
+        $DOCKERIMAGE:$DOCKERVERSION
 
     writeLog "runed"
 

@@ -69,6 +69,36 @@ setupDocker()
   docker update  --restart=unless-stopped $DOCKERNAME
 }
 
+backupDB()
+{
+
+  writeLog "deleting old weewx db backup"
+  sudo rm /backup/weewx.db.gz
+
+  writeLog "backup deconz db"
+  sqlite3 /docker/$DOCKERNAME/data/weewx.sdb .dump | gzip -c > /backup/weewx.db.gz
+  writeLog "done"
+
+}
+
+restoreDB()
+{
+
+  writeLog "going to restore weewx db"
+
+  writeLog "deleting old weewx db"
+  sudo rm -f /docker/$DOCKERNAME/data/weewx.sdb 2>&1 | tee -a $LOGFILE
+
+  writeLog "restoring weewx db"
+  sudo zcat /media/pi/RHBCK/rochouse/backup/weewx.db.gz | sudo sqlite3 /docker/$DOCKERNAME/data/weewx.sdb 2>&1 | tee -a $LOGFILE
+
+  writeLog "setting weewx db permission"
+  sudo chown -R 421:421:pi /docker/$DOCKERNAME 2>&1 | tee -a $LOGFILE
+  writeLog "restored"
+
+
+
+}
 
 main "$@"
 

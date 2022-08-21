@@ -48,12 +48,14 @@ fi
         --net=host \
         --restart=always \
         --device=$CONDEV \
+        --privileged \
         -v /docker/deconz:/opt/deCONZ\
         -e DECONZ_DEVICE=$DEV \
         -e TZ=Europe/Rome \
         -e DECONZ_VNC_MODE=1 \
         -e DECONZ_VNC_PORT=5901 \
         -e DECONZ_WEB_PORT=81 \
+        -e DECONZ_VNC_PASSWORD=ciao \
         $DOCKERIMAGE:$DOCKERVERSION
 
     writeLog "runed"

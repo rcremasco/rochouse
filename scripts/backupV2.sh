@@ -90,7 +90,7 @@ if [ -d /media/pi/RHBCK ]; then
   localBackup
   writeLog "INFO - End local USB backup"
 fi
-
+exit
 writeLog "Saving homeassistant folder"
 rclone sync /docker/homeassistant/ GDRIVE:raspi/docker/homeassistant --exclude home-assistant.log --exclude home-assistant_v2.db --stats-one-line-date -P --stats 10m
 

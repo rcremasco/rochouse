@@ -79,7 +79,7 @@ removeImage()
 
 stopDocker()
 {
-  if [ $(docker ps | grep $DOCKERNAME | wc -l) -eq 1 ]; then
+  if [ $(docker ps | grep $DOCKERIMAGE | wc -l) -eq 1 ]; then
     writeLog "stopping $DOCKERNAME docker"
     docker stop $DOCKERNAME
     writeLog "stopped"
@@ -93,7 +93,7 @@ removeDocker()
 
   stopDocker
 
-  if [ $(docker ps -a | grep $DOCKERNAME | wc -l) -eq 1 ]; then
+  if [ $(docker ps -a | grep $DOCKERIMAGE | wc -l) -eq 1 ]; then
     writeLog "removing $DOCKERNAME docker"
     docker rm $DOCKERNAME
     writeLog "$DOCKERNAME removed"

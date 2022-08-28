@@ -56,6 +56,14 @@ fi
         -e DECONZ_VNC_PORT=5901 \
         -e DECONZ_WEB_PORT=81 \
         -e DECONZ_VNC_PASSWORD=ciao \
+        -e DEBUG_INFO=1  \
+        -e DEBUG_APS=0  \
+        -e DEBUG_ZCL=0  \
+        -e DEBUG_DDF=1  \
+        -e DEBUG_DEV=0  \
+        -e DEBUG_OTA=1  \
+        -e DEBUG_ERROR=1  \
+        -e DEBUG_HTTP=0  \
         $DOCKERIMAGE:$DOCKERVERSION
 
     writeLog "runed"

@@ -67,7 +67,7 @@ restoreDB()
   sudo zcat /backup/grafana.db.gz | sudo sqlite3 /docker/grafana/grafana.db 2>&1 | tee -a $LOGFILE
 
   writeLog "setting grafana db permission"
-  sudo chown -R pi:pi /docker/homeassistant/home-assistant_v2.db 2>&1 | tee -a $LOGFILE
+  sudo chown -R 472:0 /docker/grafana/grafana.db 2>&1 | tee -a $LOGFILE
   writeLog "restored"
 
 }

@@ -6,7 +6,7 @@ DECONZ_ROOT=$APP/deconz
 
 DOCKERNAME="deconz"
 DOCKERIMAGE="deconzcommunity/deconz"
-DOCKERVERSION="latest"
+DOCKERVERSION="stable"
 
 
 SCRIPTPATH=$(dirname $0)
@@ -59,9 +59,9 @@ fi
         -e DEBUG_INFO=1  \
         -e DEBUG_APS=0  \
         -e DEBUG_ZCL=0  \
-        -e DEBUG_DDF=1  \
-        -e DEBUG_DEV=0  \
-        -e DEBUG_OTA=1  \
+        -e DEBUG_DDF=0  \
+        -e DEBUG_DEV=1  \
+        -e DEBUG_OTA=0  \
         -e DEBUG_ERROR=1  \
         -e DEBUG_HTTP=0  \
         $DOCKERIMAGE:$DOCKERVERSION

@@ -78,8 +78,8 @@ setupDocker()
 restoreDB()
 {
 
-  writeLog "removing old backup data"
-  sudo rm -rf /docker/influxdb/data/
+#  writeLog "removing old backup data"
+#  sudo rm -rf /docker/influxdb/data/
 
   writeLog "restoring influx ha db"
   docker exec -it $DOCKERNAME influxd restore -portable -db ha /backup/influx.bck/ha
@@ -99,11 +99,11 @@ backupDB()
   sudo rm /backup/influx.bck/telegraf/*
 
   writeLog "backup ha db"
-  docker exec -i $DOCKERNAME influxd  backup -portable -database ha -host 127.0.0.1:8088 /backup/influx.bck/ha
+  docker exec -i $DOCKERNAME influxd  backup -portable -db ha /backup/influx.bck/ha
   writeLog "done"
 
   writeLog "backup telegraf db"
-  docker exec -i $DOCKERNAME influxd  backup -portable -database telegraf -host 127.0.0.1:8088 /backup/influx.bck/telegraf
+  docker exec -i $DOCKERNAME influxd  backup -portable -db telegraf /backup/influx.bck/telegraf
   writeLog "done"
 
 }

@@ -130,7 +130,7 @@ fi
 
 writeLog "INFO - Installo prerequisiti"
 #chown root:docker /docker
-#apt-get -y install sqlite
+apt -y install sqlite3
 
 sleep 5
 

@@ -6,7 +6,7 @@ Z2M_ROOT=$APP/z2m
 
 DOCKERNAME="z2m"
 DOCKERIMAGE="koenkk/zigbee2mqtt"
-DOCKERVERSION="stable"
+DOCKERVERSION="1.30.0"
 
 
 SCRIPTPATH=$(dirname $0)
@@ -17,6 +17,7 @@ setupFolder()
   # Creazione directory
   if [ ! -d  $Z2M_ROOT ]; then
     mkdir -p $Z2M_ROOT
+    sudo chown 1001:1001 $Z2M_ROOT
     writeLog "$Z2M_ROOT created"
   else
     writeLog "$Z2M_ROOT already present"
@@ -43,8 +44,11 @@ fi
     writeLog "run $DOCKERNAME docker"
     docker run -d --name=$DOCKERNAME \
         --net=host \
+        -p 8088:8088 \
         --restart=unless-stopped \
         --device=$USBDEV \
+        --user 1001:1001 \
+        --group-add dialout \
         -v $Z2M_ROOT:/app/data\
         -e TZ=Europe/Rome \
         $DOCKERIMAGE:$DOCKERVERSION

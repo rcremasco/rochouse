@@ -1,1 +1,7 @@
-sudo ip address add 192.168.10.5/24 dev wlan0
+
+SCRIPTPATH=$(dirname $0)
+source $SCRIPTPATH/exec-common.sh
+
+
+sudo ip address add $VIP/24 dev wlan0
+

@@ -47,7 +47,7 @@ localBackup()
   $SCRIPTPATH/exec-nodered.sh save 2>&1 | tee -a $LOGFILE
 
   writeLog "saving mosquito image"
-  $SCRIPTPATH/exec-magicmirror.sh save 2>&1 | tee -a $LOGFILE
+  $SCRIPTPATH/exec-mosquito.sh save 2>&1 | tee -a $LOGFILE
 
   writeLog "saving weewx image"
   $SCRIPTPATH/exec-weewx.sh save 2>&1 | tee -a $LOGFILE

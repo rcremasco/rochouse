@@ -5,7 +5,7 @@ APP="/docker"
 
 DOCKERNAME="weewx"
 DOCKERIMAGE="weewx"
-DOCKERVERSION="nightly"
+DOCKERVERSION="latest"
 
 WEEWX_ROOT=$APP/$DOCKERNAME
 

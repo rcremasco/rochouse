@@ -6,7 +6,7 @@ MM_ROOT="$APP/magicmirror"
 MM_CONF="$MM_ROOT/config"
 MM_MODULES="$MM_ROOT/modules"
 
-DOCKERNAME="mm"
+DOCKERNAME="MagicMirror"
 DOCKERIMAGE="bastilimbach/docker-magicmirror"
 DOCKERVERSION="latest"
 

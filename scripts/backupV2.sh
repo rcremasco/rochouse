@@ -31,8 +31,8 @@ localBackup()
   writeLog "saving docker-magicmirror image"
   $SCRIPTPATH/exec-magicmirror.sh save 2>&1 | tee -a $LOGFILE
 
-  writeLog "saving influxdb image"
-  $SCRIPTPATH/exec-influx.sh save 2>&1 | tee -a $LOGFILE
+  writeLog "saving influxdb2 image"
+  $SCRIPTPATH/exec-influx2.sh save 2>&1 | tee -a $LOGFILE
 
   writeLog "saving grafana image"
   $SCRIPTPATH/exec-grafana.sh save 2>&1 | tee -a $LOGFILE
@@ -40,14 +40,14 @@ localBackup()
   writeLog "saving telegraf image"
   $SCRIPTPATH/exec-telegraf.sh save 2>&1 | tee -a $LOGFILE
 
-  writeLog "saving chronograf image"
-  $SCRIPTPATH/exec-chronograf.sh save 2>&1 | tee -a $LOGFILE
+#  writeLog "saving chronograf image"
+#  $SCRIPTPATH/exec-chronograf.sh save 2>&1 | tee -a $LOGFILE
 
   writeLog "saving node red-image"
   $SCRIPTPATH/exec-nodered.sh save 2>&1 | tee -a $LOGFILE
 
-  writeLog "saving mosquito image"
-  $SCRIPTPATH/exec-mosquito.sh save 2>&1 | tee -a $LOGFILE
+  writeLog "saving mosquitto image"
+  $SCRIPTPATH/exec-mosquitto.sh save 2>&1 | tee -a $LOGFILE
 
   writeLog "saving weewx image"
   $SCRIPTPATH/exec-weewx.sh save 2>&1 | tee -a $LOGFILE

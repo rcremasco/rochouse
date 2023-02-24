@@ -56,7 +56,7 @@ localBackup()
   $SCRIPTPATH/exec-httpd-weewx.sh save 2>&1 | tee -a $LOGFILE
 
   writeLog "Exporting influxDb data"
-  $SCRIPTPATH/exec-influx.sh backupdb 2>&1 | tee -a $LOGFILE
+  $SCRIPTPATH/exec-influx2.sh backupdb 2>&1 | tee -a $LOGFILE
 
   writeLog "Exporting home-assistant db"
   $SCRIPTPATH/exec-homeassistant.sh backupdb 2>&1 | tee -a $LOGFILE

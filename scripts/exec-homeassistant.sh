@@ -4,7 +4,7 @@
 APP="/docker"
 HA_ROOT="$APP/homeassistant"
 
-DOCKERNAME="ha"
+DOCKERNAME="homeass"
 DOCKERIMAGE="homeassistant/raspberrypi3-homeassistant"
 DOCKERVERSION="stable"
 

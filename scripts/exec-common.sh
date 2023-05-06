@@ -6,7 +6,9 @@ writeLog()
 {
 
     echo "$(date +"%Y/%m/%d %H:%M:%S") - .. $1"
-#    echo "$(date +"%Y/%m/%d %H:%M:%S") - .. $1" >> /tmp/backup.log
+    if [ ! -z "$LOGFILE" ]; then
+        echo "$(date +"%Y/%m/%d %H:%M:%S") - .. $1" >> $LOGFILE
+    fi
 
 }
 

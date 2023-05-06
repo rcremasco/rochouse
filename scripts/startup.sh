@@ -1,3 +1,5 @@
+#!/usr/bin/bash
+
 SCRIPTPATH=$(dirname $0)
 LOGFILE="/tmp/startup.log"
 export LOGFILE
@@ -7,7 +9,7 @@ source $SCRIPTPATH/exec-common.sh
 writeLog "INFO - Startup..."
 writeLog "INFO - Controllo connettività."
 
-maxRetry=20;
+maxRetry=100;
 i=0;
 netOk=0;
 while [ ! $netOk -eq 1 ];
@@ -17,6 +19,7 @@ do
     netOk=1;
   else
     writeLog "WARNING - Non raggiungo il default gateway "
+    sleep 1
   fi
 
   i=$(( $i+1 ))
@@ -29,6 +32,7 @@ do
 
 done
 
+maxRetry=10;
 i=0;
 netOk=0;
 while [ ! $netOk -eq 1 ];
@@ -38,6 +42,7 @@ do
     netOk=1;
   else
     writeLog "WARNING - Connessione internet assente"
+    sleep 1
   fi
 
   i=$(( $i+1 ))

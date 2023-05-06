@@ -101,7 +101,7 @@ backupDB()
 #  sudo rm /backup/influx.bck/telegraf/*
 
   writeLog "backup ha db"
-  docker exec -i $DOCKERNAME influx  backup -h
+#  docker exec -i $DOCKERNAME influx  backup -h
   docker exec -i $DOCKERNAME influx  backup --host http://192.168.10.4:8086 -o rochouse-org -b ha/autogen -t $TOKEN /backup/influx.bck/ha
 
   writeLog "done"

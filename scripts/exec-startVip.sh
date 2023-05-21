@@ -1,3 +1,4 @@
+#!/bin/bash
 
 SCRIPTPATH=$(dirname $0)
 source $SCRIPTPATH/exec-common.sh
@@ -8,7 +9,10 @@ if ping -c 1 $VIP  > /dev/null; then
   netOk=1;
 else
   writeLog "INFO - attivazione IP $VIP"
-  sudo ip address add $VIP/24 dev eth0
+  #sudo ip address add $VIP/24 dev eth0
+  INT="$(ip r | grep default | awk '{print $5}')"
+  writeLog "INFO - Attivazione IP $VIP su interfaccia $INT"
+  sudo ip address add $VIP/24 dev $INT
 fi
 
 if ping -c 1 $VIP  > /dev/null; then

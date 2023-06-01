@@ -15,7 +15,7 @@ setupFolder()
   # Creazione directory
   if [ ! -d  $CHAIN2_ROOT ]; then
     sudo mkdir -p $CHAIN2_ROOT
-    sudo chown -R pi:pi $CHAIN2_ROOT
+    sudo chown -R $USER:$USER $CHAIN2_ROOT
     writeLog "$CHAIN2_ROOT created"
   else
     writeLog "$CHAIN2_ROOT already present"
@@ -28,7 +28,7 @@ runDocker()
 {
   if ! isRunned ; then
     writeLog "buildind image"
-    cd /home/pi/rochouse/chain2
+    cd /home/$USER/rochouse/chain2
     docker build  -t chain2 .
     cd $SCRIPTPATH
 

@@ -1,0 +1,422 @@
+substitutions:
+  awake_duration: 30s
+  sleep_duration: 30s
+
+esphome:
+  name: esphome-web-b32ae0
+  friendly_name: espeink01
+
+# On boot run script to see if Deep Sleep is prevented or not
+#  on_boot:
+#    priority: -100
+#    then:
+#      - delay: 30s
+#      - logger.log: 'Booting up...'
+#      - component.update: eink_display
+#      - script.execute: consider_deep_sleep
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "XWrKrRqqwPGmbefmAfhLhVxtRGJ63mbtoP6oF/cofj0="
+
+ota:
+#  on_end:
+#    then:
+#      - logger.log: 'OTA Successfull - Disabling prevent_deep_sleep'
+#      - homeassistant.service:
+#          service: input_boolean.turn_off
+#          data:
+#              entity_id: input_boolean.prevent_deep_sleep
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: True
+  power_save_mode: LIGHT
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "eink1"
+    password: "ViaPragallo25"
+
+captive_portal:
+
+# Example configuration entry
+spi:
+  clk_pin: 13
+  mosi_pin: 14
+
+
+font:
+  - file: "fonts/segoeui.ttf"
+    id: segoe
+    size: 48
+  - file: "fonts/segoeui.ttf"
+    id: segoesmall
+    size: 32
+  - file: 'fonts/materialdesignicons-webfont.ttf'
+    id: font_icons
+    size: 48
+    glyphs:
+      - "\U000F06D5" # fulmine energia
+      - "\U000F095B" # corrente alternata
+      - "\U000F09C2" # freccia verso destra
+      - "\U000F09C0" # freccia verso sinistra
+      - "\U000F0D3E" # Traliccio
+      - "\U000F17FF" # sole
+      - "\U000F192C" # traliccio freccia destra
+      - "\U000F192D" # traliccio freccia sinistra
+      - "\U000F06A1" # casa
+      - "\U000F10C2" # Termometro
+      - "\U000F0207" # quadrato con freccia che esce
+      - "\U000F059D" # vento
+      - "\U000F0DBB" # raffica
+      - "\U000F058E" # Umidità
+      - "\U000F06A0" # pellet
+      - "\U000f028F" # Cucina
+      - "\U000F12D3" # Garage chiuso
+      - "\U000F12D4" # garage aperto
+      - "\U000F156D" # Sala
+      - "\U000F07C0" # Studio
+      - "\U000F157D" # faccina che suda
+      - "\U000F0CDC" # adesso
+      - "\U000F1478" # 24 ore
+      - "\U000F00B5" # pressione
+      - "\U000F0596" # pioggia
+
+
+# sensori inviati verso HA
+sensor:
+  - platform: wifi_signal
+    name: "eink01 - WiFi Signal Strength"
+    id: wifisignal
+    unit_of_measurement: "dBm"
+    entity_category: "diagnostic"
+    update_interval: 60s
+  - platform: homeassistant
+    name: "Power Balance"
+    id: powerbalance
+    entity_id: sensor.powerbalance
+  - platform: homeassistant
+    name: "Potenza consumata"
+    id: powerconsumed
+    entity_id: sensor.powerconsumed
+  - platform: homeassistant
+    name: "Potenza Generata"
+    id: powergenerated
+    entity_id: sensor.powergenerated
+  - platform: homeassistant
+    name: "Temperatura Esterna"
+    id: externaltemp
+    entity_id: sensor.externaltemp
+  - platform: homeassistant
+    name: "Velocità Vento"
+    id: windspeed
+    entity_id: sensor.velvento
+  - platform: homeassistant
+    name: "Raffica Vento"
+    id: rafspeed # id interno
+    entity_id: sensor.rafspeed # id lato HA
+  - platform: homeassistant
+    name: "Umidità Esterna"
+    id: umiditaesterna
+    entity_id: sensor.umiditaesterna
+  - platform: homeassistant
+    name: "Livello Pellet"
+    id: pellet
+    entity_id: sensor.pellet
+  - platform: homeassistant
+    name: "Temperatura Sala"
+    id: tempsala
+    entity_id: sensor.temperature_52
+  - platform: homeassistant
+    name: "Temperatura Cucina"
+    id: tempcucina
+    entity_id: sensor.temperature_55
+  - platform: homeassistant
+    name: "Temperatura Studio"
+    id: tempstudio
+    entity_id: sensor.temperature_70
+  - platform: homeassistant
+    name: "Temperatura percepita"
+    id: temppercepita
+    entity_id: sensor.meteo_temperatura_percepita
+  - platform: homeassistant
+    name: "Pioggia"
+    id: pioggia
+    entity_id: sensor.meteo_pioggia
+  - platform: homeassistant
+    name: "Pioggia in 1 giorno"
+    id: pioggia1giorno
+    entity_id: sensor.meteo_pioggia_cm_in_24_ore
+  - platform: homeassistant
+    name: "Pressione"
+    id: pressione
+    entity_id: sensor.meteo_pressione
+
+text_sensor:
+  - platform: homeassistant
+    name: "Porta Garage"
+    id: portagarage
+    entity_id: sensor.porta_garage
+
+binary_sensor:
+  - platform: homeassistant
+    id: prevent_deep_sleep
+    name: "Prevent Deep Sleep"
+    entity_id: input_boolean.prevent_deep_sleep
+
+display:
+  - platform: waveshare_epaper
+    id: eink_display
+    cs_pin: 15
+    dc_pin: 27
+    busy_pin: 25
+    reset_pin: 26
+    model: 7.50inV2
+    update_interval: 60s
+    #auto_clear_enabled: False
+    #reset_duration: 2ms
+
+    lambda: |-
+      //
+
+      #define FONTSIZE 48
+      #define LINESPACE 4
+      #define CHARSPACE 1
+
+      // Box 1 energia
+      int xo = 0;
+      int yo = 0;
+      int xe = (FONTSIZE+CHARSPACE)*7;
+      int ye = (FONTSIZE+(LINESPACE*2))*3;
+
+      it.line(xo,yo ,xe,yo);
+      it.line(xo,yo, xo,ye);
+      it.line(xo,ye, xe,ye);
+      it.line(xe,yo, xe,ye);
+
+      int xOffset = 8;
+      int yOffset = 0;
+      int row = 1;
+
+      it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(font_icons), TextAlign::BASELINE_LEFT, "\U000F17FF" );
+      it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F06A1" );
+      if(!isnan(id(powergenerated).state)) {
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(segoe), TextAlign::BASELINE_RIGHT, "%4.0f W", id(powergenerated).state);
+      }
+
+      row++;
+      it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F095B" );
+      it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F06A1" );
+      if(!isnan(id(powerconsumed).state)) {
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(segoe), TextAlign::BASELINE_RIGHT, "%4.0f W", id(powerconsumed).state);
+      }
+
+      row++;
+      if(!isnan(id(powerconsumed).state)) {
+        if(id(powerbalance).state > 0) {
+          it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F06A1" );
+          it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F192D" );
+          it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(segoe), TextAlign::BASELINE_RIGHT, "%4.0f W", id(powerbalance).state);
+        } else {
+          it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F192C" );
+          it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F06A1" );
+          it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(segoe), TextAlign::BASELINE_RIGHT, "%4.0f W", id(powerbalance).state);
+        }
+      }
+
+      // box 2 temp e wind
+      xo = 0;
+      yo = ye+10;
+      xe = (FONTSIZE+CHARSPACE)*7;
+      ye = yo+((FONTSIZE+(LINESPACE*2))*4);
+
+      it.line(xo,yo ,xe,yo);
+      it.line(xo,yo, xo,ye);
+      it.line(xo,ye, xe,ye);
+      it.line(xe,yo, xe,ye);
+
+      xOffset = 8;
+      yOffset = 0;
+      row = 1;
+
+      it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(font_icons), TextAlign::BASELINE_LEFT, "\U000F10C2" );
+      it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F0207" );
+      if(!isnan(id(externaltemp).state)) {
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(segoe), TextAlign::BASELINE_RIGHT, "%2.1f °C", id(externaltemp).state);
+      }
+
+      row++;
+      it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(font_icons), TextAlign::BASELINE_LEFT, "\U000F058E" );
+      it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F0207" );
+      if(!isnan(id(umiditaesterna).state)) {
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(segoe), TextAlign::BASELINE_RIGHT, "%2.1f  %%", id(umiditaesterna).state);
+      }
+
+      row++;
+      it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F059D" );
+      it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F059D" );
+      if(!isnan(id(windspeed).state)) {
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(segoe), TextAlign::BASELINE_RIGHT, "%3.0f Km/h", id(windspeed).state);
+      }
+
+      row++;
+      it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F0DBB" );
+      it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F059D" );
+      if(!isnan(id(rafspeed).state)) {
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(segoe), TextAlign::BASELINE_RIGHT, "%3.0f Km/h", id(rafspeed).state);
+      }
+
+      // box 3 Pellet
+      xo = 0;
+      yo = ye+10;
+      xe = (FONTSIZE+CHARSPACE)*7;
+      ye = yo+((FONTSIZE+(LINESPACE*2))*1);
+
+      it.line(xo,yo ,xe,yo);
+      it.line(xo,yo, xo,ye);
+      it.line(xo,ye, xe,ye);
+      it.line(xe,yo, xe,ye);
+
+      xOffset = 8;
+      yOffset = 0;
+      row = 1;
+
+      it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(font_icons), TextAlign::BASELINE_LEFT, "\U000F06A0" );
+      //it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F0207" );
+      if(!isnan(id(pellet).state)) {
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(segoe), TextAlign::BASELINE_RIGHT, "%3.0f %%", id(pellet).state);
+      }
+
+      // box 4 temp cucina sla studio
+      xo = 450;
+      yo = 0;
+      xe = xo+(FONTSIZE+CHARSPACE)*7;
+      ye = yo+((FONTSIZE+(LINESPACE*2))*3);
+
+      it.line(xo,yo ,xe,yo);
+      it.line(xo,yo, xo,ye);
+      it.line(xo,ye, xe,ye);
+      it.line(xe,yo, xe,ye);
+
+      xOffset = 8;
+      yOffset = 0;
+      row = 1;
+
+      it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(font_icons), TextAlign::BASELINE_LEFT, "\U000F10C2" );
+      it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F028F" );
+      if(!isnan(id(tempcucina).state)) {
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(segoe), TextAlign::BASELINE_RIGHT, "%2.1f °C", id(tempcucina).state);
+      }
+
+      row++;
+      it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(font_icons), TextAlign::BASELINE_LEFT, "\U000F10C2" );
+      it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F156D" );
+      if(!isnan(id(tempsala).state)) {
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(segoe), TextAlign::BASELINE_RIGHT, "%2.1f °C", id(tempsala).state);
+      }
+
+      row++;
+      it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(font_icons), TextAlign::BASELINE_LEFT, "\U000F10C2" );
+      it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F07C0" );
+      if(!isnan(id(tempstudio).state)) {
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(segoe), TextAlign::BASELINE_RIGHT, "%2.1f °C", id(tempstudio).state);
+      }
+
+
+      // box 5 temp perc pioggio pioggiaCm press
+      xo = 450;
+      yo = ye+10;
+      xe = xo+(FONTSIZE+CHARSPACE)*7;
+      ye = yo+((FONTSIZE+(LINESPACE*2))*4);
+
+      it.line(xo,yo ,xe,yo);
+      it.line(xo,yo, xo,ye);
+      it.line(xo,ye, xe,ye);
+      it.line(xe,yo, xe,ye);
+
+      xOffset = 8;
+      yOffset = 0;
+      row = 1;
+
+      it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(font_icons), TextAlign::BASELINE_LEFT, "\U000F10C2" );
+      it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F157D" );
+      if(!isnan(id(temppercepita).state)) {
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(segoe), TextAlign::BASELINE_RIGHT, "%2.1f °C", id(temppercepita).state);
+      }
+
+      row++;
+      it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(font_icons), TextAlign::BASELINE_LEFT, "\U000F0596" );
+      it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F0CDC" );
+      if(!isnan(id(pioggia).state)) {
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(segoesmall), TextAlign::BASELINE_RIGHT, "%2.1f  mm/h", id(pioggia).state);
+      }
+
+      row++;
+      it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F0596" );
+      it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F1478" );
+      if(!isnan(id(pioggia1giorno).state)) {
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(segoesmall), TextAlign::BASELINE_RIGHT, "%2.1f cm/g", id(pioggia1giorno).state);
+      }
+
+      row++;
+      it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F00B5" );
+      it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F00B5" );
+      if(!isnan(id(pressione).state)) {
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(segoesmall), TextAlign::BASELINE_RIGHT, "%4.0f mbar", id(pressione).state);
+      }
+
+      // box 6 Garage
+      xo = 450;
+      yo = ye+10;
+      xe = xo+(FONTSIZE+CHARSPACE)*7;
+      ye = yo+((FONTSIZE+(LINESPACE*2))*1);
+
+      it.line(xo,yo ,xe,yo);
+      it.line(xo,yo, xo,ye);
+      it.line(xo,ye, xe,ye);
+      it.line(xe,yo, xe,ye);
+
+      xOffset = 8;
+      yOffset = 0;
+      row = 1;
+
+      it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(font_icons), TextAlign::BASELINE_LEFT, "\U000F12D3" );
+      it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F12D4" );
+      //if(strlen(id(portagarage).state.length() > 0 )) {
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(segoe), TextAlign::BASELINE_RIGHT, "%s ", id(portagarage).state.c_str());
+      //} else {
+      //  it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(segoe), TextAlign::BASELINE_RIGHT, "bho");
+      //}
+
+# Define length of Deep sleep
+#deep_sleep:
+#  id: deep_sleep_control
+#  sleep_duration: ${sleep_duration}
+
+# Deep sleep script if/then/else
+#script:
+#  - id: consider_deep_sleep
+#    mode: queued
+#    then:
+#      - delay: ${awake_duration}
+#      - if:
+#          condition:
+#            binary_sensor.is_on: prevent_deep_sleep
+#          then:
+#            - logger.log: 'Skipping sleep, per prevent_deep_sleep'
+#          else:
+#            - logger.log: 'Going to deep_sleep'
+#            - deep_sleep.enter: deep_sleep_control
+#      - script.execute: consider_deep_sleep

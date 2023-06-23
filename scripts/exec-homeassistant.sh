@@ -6,6 +6,7 @@ HA_ROOT="$APP/homeassistant"
 
 DOCKERNAME="homeass"
 
+# if on raspberry
 if [ $(uname -a | grep aarch64 | wc -l) -eq 1 ]; then
   DOCKERIMAGE="homeassistant/raspberrypi3-homeassistant"
 else

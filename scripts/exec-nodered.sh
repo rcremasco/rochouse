@@ -41,7 +41,7 @@ npm install node-red-contrib-actionflows \
 EOF
   chmod +x /docker/nodered/addon.sh
 
-  sudo chown -R pi:pi $NODERED_ROOT
+  sudo chown -R $USER:$USER $NODERED_ROOT
 
 }
 

@@ -5,7 +5,13 @@ APP="/docker"
 HA_ROOT="$APP/homeassistant"
 
 DOCKERNAME="homeass"
-DOCKERIMAGE="homeassistant/raspberrypi3-homeassistant"
+
+if [ $(uname -a | grep aarch64 | wc -l) -eq 1 ]; then
+  DOCKERIMAGE="homeassistant/raspberrypi3-homeassistant"
+else
+  DOCKERIMAGE="ghcr.io/home-assistant/home-assistant"
+fi
+
 DOCKERVERSION="stable"
 
 

@@ -90,10 +90,10 @@ restoreDB()
   sudo rm -f /docker/deconz/zll.db 2>&1 | tee -a $LOGFILE
 
   writeLog "restoring deconz db"
-  sudo zcat /media/pi/RHBCK/rochouse/backup/zll.db.gz | sudo sqlite3 /docker/deconz/zll.db 2>&1 | tee -a $LOGFILE
+  sudo zcat /backup/zll.db.gz | sudo sqlite3 /docker/deconz/zll.db 2>&1 | tee -a $LOGFILE
 
   writeLog "setting deconz db permission"
-  sudo chown -R pi:pi /docker/deconz 2>&1 | tee -a $LOGFILE
+  sudo chown -R $USER:$USER /docker/deconz 2>&1 | tee -a $LOGFILE
   writeLog "restored"
 
 

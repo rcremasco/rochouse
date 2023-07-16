@@ -1,4 +1,21 @@
 #!/usr/bin/bash
+# create file /etc/systemd/system/multi-user.target.wants/rochouse-startup.service
+
+# [Unit]
+# Description=RoChouse start
+# Wants=network-online.target
+# After=network-online.target
+
+# [Service]
+# Type=oneshot
+# ExecStart=/bin/bash -c '/home/roberto/rochouse/scripts/startup.sh'
+# RemainAfterExit=yes
+
+# [Install]
+#WantedBy=multi-user.target
+
+# reload systemd:
+# systemctl daemon-reload
 
 SCRIPTPATH=$(dirname $0)
 LOGFILE="/tmp/startup.log"

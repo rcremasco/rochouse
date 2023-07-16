@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-# create file /etc/systemd/system/multi-user.target.wants/rochouse-startup.service
+# create file /etc/systemd/system/rochouse-startup.service
 
 # [Unit]
 # Description=RoChouse start
@@ -16,6 +16,7 @@
 
 # reload systemd:
 # systemctl daemon-reload
+# systemctl enable rochouse-startup.service
 
 SCRIPTPATH=$(dirname $0)
 LOGFILE="/tmp/startup.log"

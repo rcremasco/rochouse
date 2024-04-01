@@ -1,0 +1,94 @@
+esphome:
+  name: espoled1
+  friendly_name: espOled1.rochouse.local
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "rGMHvn46IyYulGjYaXsr0wBUtjg25GYqQaGGeHR6L3A="
+
+ota:
+  password: "90f93b8474664f2fc8204e9705fb107b"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Espoled1 Fallback Hotspot"
+    password: !secret wifi_password
+
+captive_portal:
+    
+
+sensor:
+  - platform: homeassistant
+    id: tempext
+    entity_id: sensor.meteo_temperatura_esterna
+    internal: true
+  - platform: homeassistant
+    id: tempsala
+    entity_id: sensor.temperature_52
+    internal: true
+  - platform: homeassistant
+    id: powerbalance
+    entity_id: sensor.powerbalance
+    internal: true
+
+
+font:
+  - file: 'fonts/segoeui.ttf'
+    id: font1
+    size: 40
+    glyphs: '!"%()+,-_.:°0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ abcdefghijklmnopqrstuvwxyzåäöé'
+  - file: 'fonts/segoeui.ttf'
+    id: font2
+    size: 32
+    glyphs: '!"%()+,-_.:°0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ abcdefghijklmnopqrstuvwxyzåäöé'
+  - file: 'fonts/segoeui.ttf'
+    id: font3
+    size: 12
+    glyphs: '!"%()+,-_.:°0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ abcdefghijklmnopqrstuvwxyzåäöé'
+
+i2c:
+  sda: GPIO12
+  scl: GPIO14
+  scan: True
+
+display:
+  - platform: ssd1306_i2c
+    model: "SSD1306 128x64"
+    id: "my_display"
+    contrast: 80%
+    address: 0x3C
+    update_interval: 3s
+    pages:
+      - id: page1
+        lambda: |-
+          it.printf(64, 12, id(font3),  TextAlign::BASELINE_CENTER, "Temperatura esterna");          
+          it.printf(64, 55, id(font1),  TextAlign::BASELINE_CENTER, "%2.1f", id(tempext).state);
+      - id: page2
+        lambda: |-
+          it.printf(64, 12, id(font3),  TextAlign::BASELINE_CENTER, "Temperatura sala");          
+          it.printf(64, 55, id(font1),  TextAlign::BASELINE_CENTER, "%2.1f", id(tempsala).state);
+      - id: page3
+        lambda: |-
+          it.printf(64, 12, id(font3),  TextAlign::BASELINE_CENTER, "Power Balance");          
+          it.printf(64, 55, id(font2),  TextAlign::BASELINE_CENTER, "%4.f", id(powerbalance).state);
+
+interval:
+  - interval: 3s
+    then:
+      - display.page.show_next: my_display
+      - component.update: my_display
+
+
+

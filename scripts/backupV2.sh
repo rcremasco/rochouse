@@ -71,13 +71,13 @@ localBackup()
   $SCRIPTPATH/exec-weewx.sh backupdb 2>&1 | tee -a $LOGFILE
 
   writeLog "saving /docker to USB key"
-  sudo rsync -avrWS --exclude '/docker/influxdb2/' --exclude '/docker/influxdb/data/' --exclude '*.db' --inplace /docker /media/pi/RHBCK/rochouse
+  sudo rsync -avrWS --exclude '/docker/influxdb2/' --exclude '/docker/influxdb/data/' --exclude '*.db' --inplace /docker /save/TOSHIBA_EXT/backup/rochouse
 
   writeLog "cleanup previous influx backup"
-  sudo rm -f /media/pi/RHBCK/rochouse/backup/influx.bck/ha/*
+  sudo rm -f /save/TOSHIBA_EXT/backup/rochouse/backup/influx.bck/ha/*
 
   writeLog "saving /backup to USB key"
-  sudo rsync -avrWS  --inplace /backup /media/pi/RHBCK/rochouse
+  sudo rsync -avrWS  --inplace /backup /save/TOSHIBA_EXT/backup/rochouse
 
   sync
   sync

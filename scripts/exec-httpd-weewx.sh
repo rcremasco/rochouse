@@ -4,7 +4,7 @@
 
 APP="/docker"
 
-DOCKERNAME="httpd-weewx"
+DOCKERNAME="httpd-wee"
 DOCKERIMAGE="httpd"
 DOCKERVERSION="2.4-bullseye"
 

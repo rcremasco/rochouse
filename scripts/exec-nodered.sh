@@ -6,7 +6,7 @@ NODERED_ROOT="$APP/nodered"
 
 DOCKERNAME="nodered"
 DOCKERIMAGE="nodered/node-red"
-DOCKERVERSION="latest"
+DOCKERVERSION="1.2.9"
 
 
 SCRIPTPATH=$(dirname $0)

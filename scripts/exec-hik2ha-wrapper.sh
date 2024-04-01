@@ -28,7 +28,7 @@ runDocker()
 {
   if ! isRunned ; then
     writeLog "buildind image"
-    cd /home/pi/rochouse/hik2ha-wrapper
+    cd /home/$USER/rochouse/hik2ha-wrapper
     docker build  -t hik2ha-wrapper .
     cd $SCRIPTPATH
 

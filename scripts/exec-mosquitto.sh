@@ -9,7 +9,7 @@ MOSQUITTO_LOG="$MOSQUITTO_ROOT/log"
 
 DOCKERNAME="mqtt"
 DOCKERIMAGE="eclipse-mosquitto"
-DOCKERVERSION="latest"
+DOCKERVERSION="1.6.8"
 
 SCRIPTPATH=$(dirname $0)
 source $SCRIPTPATH/exec-common.sh

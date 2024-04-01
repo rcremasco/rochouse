@@ -6,7 +6,8 @@ esphome:
   name: esphome-web-b32ae0
   friendly_name: espeink01
 
-# On boot run script to see if Deep Sleep is prevented or not
+
+# On boot run script to see if Deep Sleep is prevented or not  
 #  on_boot:
 #    priority: -100
 #    then:
@@ -26,7 +27,41 @@ logger:
 # Enable Home Assistant API
 api:
   encryption:
-    key: ""
+    key: "XWrKrRqqwPGmbefmAfhLhVxtRGJ63mbtoP6oF/cofj0="
+
+# mqtt
+# mqtt:
+#   id: rocmqtt
+#   broker: 192.168.10.4
+#   birth_message:
+#     topic: espeink01/status
+#     payload: online
+#   will_message:
+#     topic: espeink01/status
+#     payload: offline
+#   on_connect:
+#     - logger.log: 'MQTT connected'
+#   on_json_message:
+#     topic: weather/loop
+#     then:
+#       - logger.log: "MQTT Ci siamo"
+#       - lambda: |-
+#           if (x.containsKey("windGust_kph")) {
+#             float windGust = x["windGust_kph"];
+#             ESP_LOGI("main", "---------value is: %2.4f ", windGust );
+#             id(mqtt_wind_max_speed) = windGust;
+#           }
+
+#       - logger.log:
+#           format: "MQTT message received %2.4f"
+#           args: [ id(mqtt_wind_max_speed) ]
+
+
+# globals:
+#   - id: mqtt_wind_max_speed
+#     type: float
+#     restore_value: no
+#     initial_value: "1.1"
 
 ota:
 #  on_end:
@@ -44,18 +79,17 @@ wifi:
   fast_connect: True
   power_save_mode: LIGHT
 
+
+
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: "eink1"
-    password: ""
+    password: "ViaPragallo25"
 
 captive_portal:
+    
 
-# Example configuration entry
-spi:
-  clk_pin: 13
-  mosi_pin: 14
-
+    
 
 font:
   - file: "fonts/segoeui.ttf"
@@ -154,7 +188,7 @@ sensor:
   - platform: homeassistant
     name: "Pioggia"
     id: pioggia
-    entity_id: sensor.meteo_pioggia
+    entity_id: sensor.meteo_pioggia_cm_ora
   - platform: homeassistant
     name: "Pioggia in 1 giorno"
     id: pioggia1giorno
@@ -163,6 +197,10 @@ sensor:
     name: "Pressione"
     id: pressione
     entity_id: sensor.meteo_pressione
+  # - platform: mqtt_subscribe
+  #   name: "Data from topic"
+  #   id: dataFromTopic
+  #   topic: weather/loop
 
 text_sensor:
   - platform: homeassistant
@@ -176,18 +214,26 @@ binary_sensor:
     name: "Prevent Deep Sleep"
     entity_id: input_boolean.prevent_deep_sleep
 
+# Example configuration entry
+spi:
+  clk_pin: 13
+  mosi_pin: 14
+
 display:
   - platform: waveshare_epaper
     id: eink_display
-    cs_pin: 15
-    dc_pin: 27
-    busy_pin: 25
-    reset_pin: 26
-    model: 7.50inV2
+    cs_pin: GPIO15
+    dc_pin: GPIO27
+    busy_pin:
+      number: GPIO25
+      inverted: true
+    reset_pin: GPIO26
+    model: 7.50inV2alt
     update_interval: 60s
-    #auto_clear_enabled: False
-    #reset_duration: 2ms
-
+    #auto_clear_enabled: True
+    reset_duration: 2ms
+    setup_priority: 1000
+    
     lambda: |-
       //
 
@@ -276,7 +322,7 @@ display:
       it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F059D" );
       if(!isnan(id(rafspeed).state)) {
         it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(segoe), TextAlign::BASELINE_RIGHT, "%3.0f Km/h", id(rafspeed).state);
-      }
+      } 
 
       // box 3 Pellet
       xo = 0;
@@ -360,7 +406,7 @@ display:
       it.printf(xo+xOffset+0, yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(font_icons), TextAlign::BASELINE_LEFT, "\U000F0596" );
       it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F0CDC" );
       if(!isnan(id(pioggia).state)) {
-        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(segoesmall), TextAlign::BASELINE_RIGHT, "%2.1f  mm/h", id(pioggia).state);
+        it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)) , id(segoesmall), TextAlign::BASELINE_RIGHT, "%2.1f  mm/h", id(pioggia).state*10);
       }
 
       row++;
@@ -375,7 +421,7 @@ display:
       it.printf(xo+xOffset+FONTSIZE+CHARSPACE, yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(font_icons), TextAlign::BASELINE_LEFT, "\U000F00B5" );
       if(!isnan(id(pressione).state)) {
         it.printf(xo+xOffset+(2*(FONTSIZE+CHARSPACE))+((FONTSIZE+CHARSPACE)*4), yo+yOffset+(row*(FONTSIZE+LINESPACE)), id(segoesmall), TextAlign::BASELINE_RIGHT, "%4.0f mbar", id(pressione).state);
-      }
+      } 
 
       // box 6 Garage
       xo = 450;
@@ -420,3 +466,4 @@ display:
 #            - logger.log: 'Going to deep_sleep'
 #            - deep_sleep.enter: deep_sleep_control
 #      - script.execute: consider_deep_sleep
+

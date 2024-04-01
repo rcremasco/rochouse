@@ -32,7 +32,7 @@ do
 
 done
 
-maxRetry=10;
+maxRetry=100;
 i=0;
 netOk=0;
 while [ ! $netOk -eq 1 ];

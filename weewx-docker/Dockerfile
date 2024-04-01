@@ -40,7 +40,7 @@ RUN set -eux; \
 RUN addgroup --system --gid ${WEEWX_UID} weewx \
   && adduser --system --uid ${WEEWX_UID} --ingroup weewx weewx
 
-RUN echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
+#RUN echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
 #RUN ping -c 2 8.8.8.8
 #RUN ping -c 2 dl-cdn.alpinelinux.org
 

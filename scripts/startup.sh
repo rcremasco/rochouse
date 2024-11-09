@@ -55,9 +55,10 @@ do
 done
 
 $SCRIPTPATH/exec-startVip.sh
-$SCRIPTPATH/exec-deconz.sh start
-$SCRIPTPATH/exec-influx2.sh start
 $SCRIPTPATH/exec-mosquitto.sh start
+$SCRIPTPATH/exec-deconz.sh start
+$SCRIPTPATH/exec-z2m.sh start
+$SCRIPTPATH/exec-influx2.sh start
 $SCRIPTPATH/exec-homeassistant.sh start
 $SCRIPTPATH/exec-nodered.sh start
 $SCRIPTPATH/exec-chain2.sh start

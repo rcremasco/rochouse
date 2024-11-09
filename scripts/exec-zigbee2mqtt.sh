@@ -35,8 +35,8 @@ if [[ -c /dev/ttyACM0 ]]; then
   USBDEV="/dev/ttyACM0"
 else
   writeLog "ERROR - Non ho trovato nessun ConBee"
-  writeLog "ERROR - Esco dalla procedura..."
-  exit
+#  writeLog "ERROR - Esco dalla procedura..."
+#  exit
 fi
 
 
@@ -46,7 +46,6 @@ fi
         --net=host \
         -p 8088:8088 \
         --restart=unless-stopped \
-        --device=$USBDEV \
         --user 1001:1001 \
         --group-add dialout \
         -v $Z2M_ROOT:/app/data\

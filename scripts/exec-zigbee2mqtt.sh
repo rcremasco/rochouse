@@ -6,7 +6,7 @@ Z2M_ROOT=$APP/z2m
 
 DOCKERNAME="z2m"
 DOCKERIMAGE="koenkk/zigbee2mqtt"
-DOCKERVERSION="1.30.0"
+DOCKERVERSION="1.41.0"
 
 
 SCRIPTPATH=$(dirname $0)
